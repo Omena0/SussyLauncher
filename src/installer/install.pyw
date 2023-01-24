@@ -11,6 +11,7 @@ tkcanvas = tki.CTkCanvas
 tktextbox = tki.CTkTextbox
 tkcheckbox = tki.CTkCheckBox
 
+tki.set_appearance_mode('dark')
 
 debug = __debug__
 
