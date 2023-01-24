@@ -13,11 +13,19 @@ tkProgressbar = tki.CTkProgressBar
 tkOptionMenu = tki.CTkOptionMenu
 tkCanvas = tki.CTkCanvas
 
-debug = __debug__
-logged_in = False
+### SET ALL THE VALUES BELLOW TO FALSE BEFORE BUILDING! ###
 
+# Allows the window to be resized. And some other things maybe.
+debug = False
 
-newsText = 'New update! Patch notes: \nCreated installer and a simple way to build from src.'+' '*100
+# Set this to true to not have to log in, good for UI testing. 
+# DISCLAIMER: YOU CANT RUN MC WITHOUT SIGNING IN!!!
+# This isint a pirate launcher!!!
+logged_in = False 
+
+###########################################################
+
+defaultNewsText = 'Patch notes: \nCreated installer and a simple way to build from src.'+' '*50
 
 
 try:
@@ -50,6 +58,9 @@ def install():
     progressBar.setMax(1)
     progressBar.setProgress(0)
     mcl.install.install_minecraft_version(launchSelector.get(),minecraft_directory=minecraft_directory,callback=callback)
+    print('Install complete!')
+    showInfo('Done!','Install complete!')
+    newsLabel.configure(text=defaultNewsText)
 
 def launch():
     if not logged_in: showInfo('You arent logged in!','Log in with a microsoft account to continue.'); return
@@ -93,7 +104,7 @@ def openPage(page):
     currentPage = page
     if page == 'Home':
         launchButton.configure(text='Install')
-        newsLabel.configure(text=newsText)
+        newsLabel.configure(text=defaultNewsText)
         launchSelector.grid_configure(row=0,column=0)
     else:
         launchButton.configure(text='Launch')
@@ -103,10 +114,11 @@ def openPage(page):
         
 
 def login():
+    global login_data, logged_in
+    if logged_in: loginApp.destroy(); return
     # Login
     print('[LAUNCHER] Logging in...')
     # Try to refresh login from stored credentials
-    global login_data, logged_in
     try:
         with open('data/credentials.txt','r') as file: content = file.read()
         old_login_data = json.loads(content)
@@ -194,7 +206,7 @@ app = App()
 app.title('SussyLauncher V1')
 
 newsFontSize = 50
-while round(newsFontSize*len(newsText)/1.3) > 4050:
+while round(newsFontSize*len(defaultNewsText)/1.3) > 4050:
     newsFontSize = newsFontSize - 1
 
 
@@ -221,7 +233,7 @@ for i in enumerate(pages):
 contentFrame = tkframe(master=main,width=350,height=250,corner_radius=25)
 contentFrame.grid(row=1,column=1,stick='n',pady=10)
 
-newsLabel = tklabel(master=contentFrame,width=350,height=250,text=newsText,font=newsFont,anchor='n',wraplength=340)
+newsLabel = tklabel(master=contentFrame,width=350,height=250,text=defaultNewsText,font=newsFont,anchor='n',wraplength=340)
 newsLabel.pack(padx=20,pady=10)
 
 class progressBar:
@@ -237,6 +249,11 @@ class progressBar:
         self.progress = progress
         print(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
         launchProgress.set(progress/self.max)
+        text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
+        size = 100
+        while round(size*len(text)/1.3) > 2050:
+            size = size - 2
+        newsLabel.configure(text=text,font=tkfont(size=size))
 
     def setMax(self,max):
         self.max = max
