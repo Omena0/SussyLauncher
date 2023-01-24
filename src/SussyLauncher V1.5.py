@@ -21,11 +21,11 @@ debug = False
 # Set this to true to not have to log in, good for UI testing. 
 # DISCLAIMER: YOU CANT RUN MC WITHOUT SIGNING IN!!!
 # This isint a pirate launcher!!!
-logged_in = False 
+logged_in = False
 
 ###########################################################
 
-defaultNewsText = 'Patch notes: \nCreated installer and a simple way to build from src.'+' '*50
+defaultNewsText = 'Patch notes: \nCreated installer and a simple way to build from src.'+' '*100
 
 
 try:
@@ -39,8 +39,9 @@ else: blur_background = False
 
 minecraft_directory = 'files/'
 installed_versions = mcl.utils.get_installed_versions('files/')
+installed_version_ids = []
 all_versions = mcl.utils.get_available_versions('files/')
-for i in installed_versions: print(f'Version found: {i["id"]}')
+for i in installed_versions: print(f'Version found: {i["id"]}'); installed_version_ids.append(i['id'])
 
 CLIENT_ID = '347cf8bd-c8d1-4967-8104-ee7493cfbf2f'
 REDIRECT_URL = 'http://localhost/returnUrl'
@@ -54,13 +55,12 @@ def install():
         "setProgress": lambda progress: progressBar.setProgress(progress),
         "setMax": lambda max: progressBar.setMax(max)
     }
-    progressBar.setStatus('Initializing..')
-    progressBar.setMax(1)
-    progressBar.setProgress(0)
+    launchProgress.start()
     mcl.install.install_minecraft_version(launchSelector.get(),minecraft_directory=minecraft_directory,callback=callback)
     print('Install complete!')
     showInfo('Done!','Install complete!')
     newsLabel.configure(text=defaultNewsText)
+    launchProgress.stop()
 
 def launch():
     if not logged_in: showInfo('You arent logged in!','Log in with a microsoft account to continue.'); return
@@ -206,8 +206,8 @@ app = App()
 app.title('SussyLauncher V1')
 
 newsFontSize = 50
-while round(newsFontSize*len(defaultNewsText)/1.3) > 4050:
-    newsFontSize = newsFontSize - 1
+while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
+    newsFontSize = newsFontSize - 2
 
 
 newsFont = tkfont(size=newsFontSize)
@@ -276,7 +276,7 @@ launchSelector.grid(column=0,row=0,pady=5,padx=5)
 launchButton = tkbutton(master=launchFrame,width=200,height=75,corner_radius=15,text='Install',font=tkfont(size=20),command=launch)
 launchButton.grid(column=0,row=1,pady=5,padx=5)
 
-launchProgress = tkProgressbar(master=launchFrame,corner_radius=15,mode='intermidiate')
+launchProgress = tkProgressbar(master=launchFrame,corner_radius=15,mode='determinate',determinate_speed=0.001)
 launchProgress.set(0)
 launchProgress.grid(column=0,row=2,pady=5,padx=5)
 

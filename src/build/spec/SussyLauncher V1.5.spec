@@ -8,7 +8,7 @@ a = Analysis(
     ['..\\..\\SussyLauncher V1.5.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\aijo.aarne\\AppData\\Roaming/Python/Python311/site-packages/customtkinter', 'customtkinter')],
+    datas=[('C:\\Users\\aarne\\AppData\\Roaming/Python/Python311/site-packages/customtkinter', 'customtkinter')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
