@@ -1,4 +1,0 @@
-# OPTIONS.py: YOU CAN EDIT ANY VALUES HERE!
-
-# Use the blurred version of the login background image
-blur_background = True

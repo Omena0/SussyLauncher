@@ -239,10 +239,7 @@ pages = ['Home']
 
 for i in installed_versions:
     i = i['id']
-    if 'fabric' in i:
-        pages.append(i.split('-')[0] + '_' + i.split('-')[3])
-    else:
-        pages.append(i)
+    pages.append(i)
 
 pageCommands = []
 
@@ -276,10 +273,13 @@ sideFrame.grid(row=0, column=0, padx=0, pady=100, rowspan=4, stick='nw')
 
 
 for i in enumerate(pages):
-    print(i[1])
     index = i[0]
+    i = i[1]
+    if 'fabric' in i:
+        i = i.split('-')[0] + '_' + i.split('-')[3]
+    print(i[1])
     button = tkbutton(master=sideFrame, width=50, height=30, corner_radius=5,
-                      text=i[1], font=tkfont(size=20), command=pageCommands[index])
+                      text=i, font=tkfont(size=20), command=pageCommands[index])
     button.pack(padx=10, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
