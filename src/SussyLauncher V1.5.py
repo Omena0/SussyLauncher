@@ -2,7 +2,7 @@ import sys, subprocess, webbrowser as w, minecraft_launcher_lib as mcl, tkinter 
 from threading import Thread
 from libraries.sandals import askString, showInfo
 
-print('SussyLauncher V1.5 build 2')
+print('SussyLauncher V1.5 build 4')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -197,8 +197,8 @@ for i in installed_versions:
 pageCommands = []
 
 for page in pages:
-    exec(f'def page_{page.replace(".","_")}(): openPage("{page}")')
-    exec(f'pageCommands.append(page_{page.replace(".","_")})')
+    exec(f'def page_{page.replace(".","_").replace("-","_")}(): openPage("{page}")')
+    exec(f'pageCommands.append(page_{page.replace(".","_").replace("-","_")})')
 
 
 
