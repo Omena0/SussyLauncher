@@ -332,8 +332,7 @@ launchButton = tkbutton(master=launchFrame, width=200, height=75,
                         corner_radius=15, text='Install', font=tkfont(size=20), command=launch)
 launchButton.grid(column=0, row=1, pady=5, padx=5)
 
-launchProgress = tkProgressbar(
-    master=launchFrame, corner_radius=15, mode='determinate', determinate_speed=0.001)
+launchProgress = tkProgressbar(master=launchFrame, corner_radius=15, mode='determinate', determinate_speed=0.001)
 launchProgress.set(0)
 launchProgress.grid(column=0, row=2, pady=5, padx=5)
 
