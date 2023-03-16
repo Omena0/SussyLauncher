@@ -162,8 +162,7 @@ def login():
         login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(
             CLIENT_ID, REDIRECT_URL)
         w.open(login_url, 1, True)
-        code_url = askString(
-            'Enter URL', 'Enter the URL where you were redirected to after signing in.')
+        code_url = tki.CTkInputDialog(title='Enter URL', text='Enter the URL where you were redirected to after signing in.')
         auth_code = mcl.microsoft_account.get_auth_code_from_url(code_url)
         # Get the login data
         try:
@@ -278,8 +277,7 @@ for i in enumerate(pages):
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
     print(i[1])
-    button = tkbutton(master=sideFrame, width=50, height=30, corner_radius=5,
-                      text=i, font=tkfont(size=20), command=pageCommands[index])
+    button = tkbutton(master=sideFrame, width=50, height=30, corner_radius=5,text=i, font=tkfont(size=20), command=pageCommands[index])
     button.pack(padx=10, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
