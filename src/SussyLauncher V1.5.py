@@ -162,7 +162,7 @@ def login():
         login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(
             CLIENT_ID, REDIRECT_URL)
         w.open(login_url, 1, True)
-        code_url = tki.CTkInputDialog(title='Enter URL', text='Enter the URL where you were redirected to after signing in.')
+        code_url = tki.CTkInputDialog(title='Enter URL', text='Enter the URL where you were redirected to after signing in.').get_input()
         auth_code = mcl.microsoft_account.get_auth_code_from_url(code_url)
         # Get the login data
         try:
