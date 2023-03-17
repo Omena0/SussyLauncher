@@ -1,4 +1,5 @@
-# OPTIONS.py: YOU CAN EDIT ANY VALUES HERE!
+OPTIONS.py: YOU CAN EDIT ANY VALUES HERE!
+Only values set with True will be counted, if its anything else it will be set to False.
 
-# Use the blurred version of the login background image
+Use the blurred version of the login background image
 blur_background = True

@@ -137,27 +137,33 @@ def openPage(page):
         launchSelector.place_configure(x=999, y=999)
 
 
-def login():
+def login(enable_manual=True):
     global login_data, logged_in
     if logged_in:
         loginApp.destroy()
         return
-    # Login
+    # Try login from stored login info
     print('[LAUNCHER] Logging in...')
     # Try to refresh login from stored credentials
     try:
         with open('data/credentials.txt', 'r') as file:
             content = file.read()
         old_login_data = json.loads(content)
+        print('[LAUNCHER] Refreshing credentials...')
         login_data = mcl.microsoft_account.complete_refresh(
             client_id=CLIENT_ID, client_secret=SECRET, redirect_uri=REDIRECT_URL, refresh_token=old_login_data["refresh_token"])
+        print('[LAUNCHER] Logged in! Storing login data...')
         with open('data/credentials.txt', 'w') as file:
             file.write(json.dumps(login_data))
         logged_in = True
-        showInfo('Logged in!', f'Logged in as {login_data["name"]}')
+        
+        # Dont show "Logged in!" msgbox when already has logged in before
+        #showInfo('Logged in!', f'Logged in as {login_data["name"]}')
 
-    # Otherwise have the user log in again
+    # Otherwise ask the user to log in manually and store login info
     except Exception as e:
+        if not enable_manual:
+            return
         print(e)
         login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(
             CLIENT_ID, REDIRECT_URL)
@@ -191,6 +197,10 @@ tki.set_default_color_theme('blue')
 
 # LOGIN SCREEN
 
+# Try login without opening browser in case the auto login fails.
+try:
+    login(enable_manual=False)
+except: pass
 
 class App(tki.CTk):
     def __init__(self):
@@ -199,35 +209,38 @@ class App(tki.CTk):
         if not debug:
             self.resizable(False, False)
 
+if not logged_in:
+    
 
-loginApp = App()
-loginApp.title('Log in to SussyLaucher')
 
-# Background
-main = tkframe(master=loginApp, width=1000, height=1000)
-main.pack()
+    loginApp = App()
+    loginApp.title('Log in to SussyLaucher')
 
-canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
-canvas.pack(expand=True, fill='both')
+    # Background
+    main = tkframe(master=loginApp, width=1000, height=1000)
+    main.pack()
 
-if blur_background:
-    bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
-else:
-    bgImage = tk.PhotoImage(file='assets/bg.png')
-bgImage = bgImage.zoom(4, 6)
-bgImage = bgImage.subsample(10)
+    canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
+    canvas.pack(expand=True, fill='both')
 
-canvas.create_image(0, 0, image=bgImage, anchor='nw')
-canvas.create_text(375, 150, text='Log in to SussyLauncher:',
-                   font=tkfont(size=60), fill='white', anchor='center')
+    if blur_background:
+        bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
+    else:
+        bgImage = tk.PhotoImage(file='assets/bg.png')
+    bgImage = bgImage.zoom(4, 6)
+    bgImage = bgImage.subsample(10)
 
-login = tkbutton(master=main, text='Log in', font=tkfont(
-    size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=login)
-login.place(x=270, y=375)
+    canvas.create_image(0, 0, image=bgImage, anchor='nw')
+    canvas.create_text(375, 150, text='Log in to SussyLauncher:',
+                       font=tkfont(size=60), fill='white', anchor='center')
 
-loginApp.wm_attributes('-transparentcolor', 'grey')
+    login = tkbutton(master=main, text='Log in', font=tkfont(
+        size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=login)
+    login.place(x=270, y=375)
 
-loginApp.mainloop()
+    loginApp.wm_attributes('-transparentcolor', 'grey')
+
+    loginApp.mainloop()
 
 # CHECK LOGIN STATUS
 if not logged_in:
