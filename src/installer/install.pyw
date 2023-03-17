@@ -111,7 +111,7 @@ input = tktextbox(master=main, corner_radius=10, width=350,
                   height=25, activate_scrollbars=False)
 input.grid(row=2, column=0)
 
-input.insert('0.0', '%appdata%\\SussyLauncher\\')
+input.insert('0.0', '%appdata%\\.SussyLauncher\\')
 input.configure(state='disabled')
 
 checkbox_state = tki.StringVar(master=main, value='off')
