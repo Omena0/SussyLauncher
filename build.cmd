@@ -7,7 +7,7 @@ del "src/build" /q /s /f
 mkdir src\build
 
 echo #### Building ####
-pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "%appdata%/Python/Python311/site-packages/customtkinter;customtkinter"  "src/SussyLauncher V1.5.py"
+pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "C:\Program Files\Python311\lib\Site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.5.py"
 
 echo #### Copying Data ####
 
