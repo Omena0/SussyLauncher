@@ -28,7 +28,7 @@ try:
 except:
     print('Could not change dir to src/installer')
 
-# installPath = %appdata%/SussyLauncher/
+# installPath = %appdata%/.SussyLauncher/
 
 
 def install():
@@ -59,13 +59,13 @@ def install():
     with open(f'{a}run.cmd', 'a') as file:
         file.write(f'cd {installPath}\n')
         file.write(
-            'start "" "SussyLauncher/SussyLauncher V1.5/SussyLauncher V1.5.exe"')
+            'start "" "SussyLauncher/SussyLauncher V1.6/SussyLauncher V1.6.exe"')
 
     os.system(
-        f'mkdir "{a}SussyLauncher\\SussyLauncher V1.5\\minecraft_launcher_lib"')
-    open(f'{a}SussyLauncher\\SussyLauncher V1.5\\minecraft_launcher_lib\\version.txt', 'w').close()
+        f'mkdir "{a}SussyLauncher\\SussyLauncher V1.6\\minecraft_launcher_lib"')
+    open(f'{a}SussyLauncher\\SussyLauncher V1.6\\minecraft_launcher_lib\\version.txt', 'w').close()
 
-    pys.make_shortcut(script=f'{a}run.cmd', name='Sussy Launcher V1.5',
+    pys.make_shortcut(script=f'{a}run.cmd', name='Sussy Launcher V1.6',
                       desktop=True, startmenu=True, terminal=False)
 
     # Rest of the files
@@ -78,7 +78,7 @@ def custom_path():
         input.configure(state='normal')
     else:
         input.delete('0.0', 'end')
-        input.insert('0.0', '%appdata%\SussyLauncher')
+        input.insert('0.0', '%appdata%\.SussyLauncher')
         input.configure(state='disabled')
 
 
@@ -91,12 +91,12 @@ class App(tki.CTk):
             self.resizable(False, False)
 
 
-app = App('SussyLauncher V1.5 Installer')
+app = App('SussyLauncher V1.6 Installer')
 
 main = tkframe(master=app, width=1000, height=1000, corner_radius=15)
 main.pack(padx=10, pady=10, ipady=30, ipadx=30)
 
-titleText = 'SussyLauncher V1.5 installer'
+titleText = 'SussyLauncher V1.6 installer'
 text = '\nInstallation path:'
 
 title = tklabel(master=main, text=titleText, font=tkfont(

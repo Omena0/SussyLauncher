@@ -9,7 +9,7 @@ import os
 from threading import Thread
 from libraries.sandals import askString, showInfo
 
-print('SussyLauncher V1.5 build 4')
+print('SussyLauncher V1.6 build 7')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -32,7 +32,7 @@ logged_in = False
 
 ###########################################################
 
-defaultNewsText = 'Patch notes: \nAdded fabric support. \nTo install fabric,\n run fabric_install.py, in the parent directory of "files/"'+' '*100
+defaultNewsText = 'Patch notes: \nFix some bugs, Installer now always installs.\nNot only when python is located in Program Files.'+' '*100
 
 
 try:
@@ -262,7 +262,7 @@ for page in pages:
 
 
 app = App()
-app.title('SussyLauncher V1')
+app.title('SussyLauncher V1.6')
 
 newsFontSize = 50
 while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
