@@ -9,7 +9,7 @@
 - Navigate to scr/installer
 - Run installer.pyw
 - Click install
-- Wait for BOTH windows to close. Then a message box should pop up.
+- Wait...
 
 You should find Sussy Launcher V1.5 on your desktop and start menu.
 
@@ -21,7 +21,9 @@ You should find Sussy Launcher V1.5 on your desktop and start menu.
 - Launch SussyLauncher and run it!
 
 Note: </br>
-If the fabric install script crashes, you have installed python in an invalid directory. The supported directories are: %appdata% and Program files.
+
+- When upgrading from build 7 to 8, delete options.txt. Otherwise SussyLauncher will not be able to load the options file and will crash.
+- Your python should be located in either %appdata% or Program Files
 
 ## Todo
 
