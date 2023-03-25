@@ -7,9 +7,9 @@ import customtkinter as tki
 import json
 import os
 from threading import Thread
-from libraries.sandals import askString, showInfo
+from libraries.sandals import showInfo
 
-print('SussyLauncher V1.6 build 7')
+print('SussyLauncher V1.6 build 8')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -22,7 +22,7 @@ tkCanvas = tki.CTkCanvas
 
 ### SET ALL THE VALUES BELLOW TO FALSE BEFORE BUILDING! ###
 
-# Allows the window to be resized. And some other things maybe.
+# Allows the window to be resized. might add more to this value.
 debug = False
 
 # Set this to true to not have to log in, good for UI testing.
@@ -32,21 +32,44 @@ logged_in = False
 
 ###########################################################
 
-defaultNewsText = 'Patch notes: \nFix some bugs, Installer now always installs.\nNot only when python is located in Program Files.'+' '*100
+
+optionsText = """#OPTIONS.py:
+# YOU CAN EDIT VALUES HERE!
+
+#Use the blurred version of the login background image [1 = True, 0 = False]
+blur_background:
+0
+
+# Makes the news text font bigger or smaller
+font_size_multiplier:
+1.5
+
+
+"""
 
 
 try:
     with open('data/options.txt') as config:
-        config = config.read()
+        lines = config.readlines()
+        config = []
+        for line in lines: line = line.replace('\n',''); config.append(line)
+        
+        blur_background    =    int(config[5])
+        textSizeMultiplier =    float(config[9])
+        
 except FileNotFoundError:
-    open('data/options.txt', 'w').close()
-    with open('data/options.txt') as config:
-        config = config.read()
+    with open('data/options.txt', 'w') as file:
+        file.write(optionsText) # Create and add default settings
+        
+        # Set default values
+        blur_background = 1
+        textSizeMultiplier = 1
+        
 
-if 'blur_background = True' in config:
-    blur_background = True
-else:
-    blur_background = False
+
+defaultNewsText = 'Patch notes: \nFix some bugs, Installer now always installs.\nNot only when python is located in Program Files.'
+defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
+
 
 minecraft_directory = 'files/'
 installed_versions = mcl.utils.get_installed_versions('files/')
@@ -223,7 +246,7 @@ if not logged_in:
     canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
     canvas.pack(expand=True, fill='both')
 
-    if blur_background:
+    if blur_background == 1:
         bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
     else:
         bgImage = tk.PhotoImage(file='assets/bg.png')

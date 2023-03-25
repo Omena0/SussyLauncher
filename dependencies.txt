@@ -1,3 +1,4 @@
 minecraft_launcher_lib
 customtkinter
 pyshortcuts
+pyinstaller
