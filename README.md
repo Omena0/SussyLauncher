@@ -1,4 +1,4 @@
-# SussyLauncher V1.6
+# SussyLauncher V1.7
 
  Fuck microsoft's minecraft launcher! Ill just make my own!
 
