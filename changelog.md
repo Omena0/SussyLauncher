@@ -6,17 +6,17 @@
 1.7 update - Features, fixes and convinience!
 DELETE OPTIONS.txt WHEN UPDATING!!!
 
-- 1. Version list now centered (yes best change)
-- 2. Custom saveData folder for fabric installations
-- 3. Installer now only in one window, cant break as easily.
-- 4. Options.txt formatting changes (delete options.txt if crash after update)
-- 5. Using xcopy only in install script
-- 6. Version list button font size now scales for install length.
-- 7. Version list button corners a bit more round (lmao)
-- 8. Random bug fixes
-- 9. Added news text multipler into config.
-- 10. Renamed 'Home' page to 'Install'
-- 11. Easier to change version via variable
-- 12. Removed some unwanted auto formatting
-- 13. Fixed bug where would print only one letter of page name in console
-- 14. Installer now closes when u hit install
+1. Version list now centered (yes best change)
+2. Custom saveData folder for fabric installations
+3. Installer now only in one window, cant break as easily.
+4. Options.txt formatting changes (delete options.txt if crash after update)
+5. Using xcopy only in install script
+6. Version list button font size now scales for install length.
+7. Version list button corners a bit more round (lmao)
+8. Random bug fixes
+9. Added news text multipler into config.
+10. Renamed 'Home' page to 'Install'
+11. Easier to change version via variable
+12. Removed some unwanted auto formatting
+13. Fixed bug where would print only one letter of page name in console
+14. Installer now closes when u hit install
