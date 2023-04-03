@@ -15,7 +15,7 @@
 - Click install
 - Wait...
 
-You should find Sussy Launcher V1.5 on your desktop and start menu.
+You should find Sussy Launcher V1.7 on your desktop and start menu.
 
 ## Installing fabric
 
