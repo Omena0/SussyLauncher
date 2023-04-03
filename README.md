@@ -26,7 +26,7 @@ You should find Sussy Launcher V1.7 on your desktop and start menu.
 
 Note: </br>
 
-- When upgrading from build 7 to 8, delete options.txt. Otherwise SussyLauncher will not be able to load the options file and will crash.
+- When upgrading to an version with config changes, delete options.txt. Otherwise SussyLauncher will not be able to load the options file and will crash.
 - Your python should be located in either %appdata% or Program Files
 
 ## Todo
