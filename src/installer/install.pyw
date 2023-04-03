@@ -17,7 +17,7 @@ tkcheckbox = tki.CTkCheckBox
 
 tki.set_appearance_mode('dark')
 
-debug = __debug__
+debug = False
 
 appdata = os.getenv('appdata')
 print(f'{appdata=}')
@@ -59,18 +59,20 @@ def install():
     with open(f'{a}run.cmd', 'a') as file:
         file.write(f'cd {installPath}\n')
         file.write(
-            'start "" "SussyLauncher/SussyLauncher V1.6/SussyLauncher V1.6.exe"')
+            'start "" "SussyLauncher/SussyLauncher V1.7/SussyLauncher V1.7.exe"')
 
     os.system(
-        f'mkdir "{a}SussyLauncher\\SussyLauncher V1.6\\minecraft_launcher_lib"')
-    open(f'{a}SussyLauncher\\SussyLauncher V1.6\\minecraft_launcher_lib\\version.txt', 'w').close()
+        f'mkdir "{a}SussyLauncher\\SussyLauncher V1.7\\minecraft_launcher_lib"')
+    open(f'{a}SussyLauncher\\SussyLauncher V1.7\\minecraft_launcher_lib\\version.txt', 'w').close()
 
-    pys.make_shortcut(script=f'{a}run.cmd', name='Sussy Launcher V1.6',
+    pys.make_shortcut(script=f'{a}run.cmd', name='Sussy Launcher V1.7',
                       desktop=True, startmenu=True, terminal=False)
 
     # Rest of the files
     os.chdir('scripts')
     os.startfile('installScript_Customised.bat')
+    app.destroy()
+    sys.exit(0)
 
 
 def custom_path():
@@ -91,12 +93,12 @@ class App(tki.CTk):
             self.resizable(False, False)
 
 
-app = App('SussyLauncher V1.6 Installer')
+app = App('SussyLauncher V1.7 Installer')
 
 main = tkframe(master=app, width=1000, height=1000, corner_radius=15)
 main.pack(padx=10, pady=10, ipady=30, ipadx=30)
 
-titleText = 'SussyLauncher V1.6 installer'
+titleText = 'SussyLauncher V1.7 installer'
 text = '\nInstallation path:'
 
 title = tklabel(master=main, text=titleText, font=tkfont(

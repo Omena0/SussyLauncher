@@ -9,7 +9,9 @@ import os
 from threading import Thread
 from libraries.sandals import showInfo
 
-print('SussyLauncher V1.6 build 8')
+version = 'V1.7'
+
+print(f'SussyLauncher {version} build 13')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -32,7 +34,6 @@ logged_in = False
 
 ###########################################################
 
-
 optionsText = """#OPTIONS.py:
 # YOU CAN EDIT VALUES HERE!
 
@@ -43,6 +44,10 @@ blur_background:
 # Makes the news text font bigger or smaller
 font_size_multiplier:
 1.5
+
+# Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY
+fabric_saveData:
+1
 
 
 """
@@ -56,6 +61,7 @@ try:
         
         blur_background    =    int(config[5])
         textSizeMultiplier =    float(config[9])
+        fabric_saveData    =    int(config[13])
         
 except FileNotFoundError:
     with open('data/options.txt', 'w') as file:
@@ -64,14 +70,16 @@ except FileNotFoundError:
         # Set default values
         blur_background = 1
         textSizeMultiplier = 1
+        switch_mods = 1
         
 
 
-defaultNewsText = 'Patch notes: \nFix some bugs, Installer now always installs.\nNot only when python is located in Program Files.'
+defaultNewsText = 'Patch notes: \nAdded fabric_saveData option, made installer build in same window.                         '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
 minecraft_directory = 'files/'
+gamedir = 'files/saveData'
 installed_versions = mcl.utils.get_installed_versions('files/')
 installed_version_ids = []
 all_versions = mcl.utils.get_available_versions('files/')
@@ -106,10 +114,9 @@ def launch():
         showInfo('You arent logged in!',
                  'Log in with a microsoft account to continue.')
         return
-    if currentPage == 'Home':
+    if currentPage == 'Install':
         if launchSelector.get() in installed_versions:
-            showInfo('Version already installed!',
-                     f'The version {launchSelector.get()} is a lready installed in "files/versions"! Install cancelled!')
+            showInfo('Version already installed!',f'The version {launchSelector.get()} is a lready installed in "files/versions"! Install cancelled!')
         print(f'[LAUNCHER] Installing {launchSelector.get()}!')
         Thread(target=install, daemon=True, name='Installer').start()
         print(f'[LAUNCHER] Installed {launchSelector.get()}!')
@@ -117,18 +124,26 @@ def launch():
 
     print(f'[LAUNCHER] Launching {currentPage}')
 
-    if pages == ['Home']:
+    if pages == ['Install']:
         showInfo('Minecraft missing!', 'You need to install a version first!')
         return
 
     global login_data
     # Get Minecraft command
+    
+    if 'fabric' in currentPage and fabric_saveData:
+        print('fabric version detected!!!')
+        gameDirectory = f'files/versions/{currentPage}/saveData'
+    else:
+        print('Non-fabric version detected!!!')
+        gameDirectory = gamedir
+    
     options = {
         "username": login_data["name"],
         "uuid": login_data["id"],
         "token": login_data["access_token"],
         "jvmArguments": ['-Xmx4G', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseG1GC', '-XX:G1NewSizePercent=20', '-XX:G1ReservePercent=20', '-XX:MaxGCPauseMillis=50', '-XX:G1HeapRegionSize=32M'],
-        "gameDirectory": 'files/saveData',
+        "gameDirectory": gameDirectory,
 
     }
 
@@ -149,7 +164,7 @@ def openPage(page):
     print(page)
     global currentPage
     currentPage = page
-    if page == 'Home':
+    if page == 'Install':
         launchButton.configure(text='Install')
         newsLabel.configure(text=defaultNewsText)
         launchSelector.grid_configure(row=0, column=0)
@@ -213,7 +228,7 @@ def login(enable_manual=True):
 
 latest_version = mcl.utils.get_latest_version()["release"]
 
-currentPage = 'Home'
+currentPage = 'Install'
 
 tki.set_appearance_mode('dark')
 tki.set_default_color_theme('blue')
@@ -270,7 +285,7 @@ if not logged_in:
     sys.exit()
 
 # INIT MAIN GUI
-pages = ['Home']
+pages = ['Install']
 
 for i in installed_versions:
     i = i['id']
@@ -285,7 +300,7 @@ for page in pages:
 
 
 app = App()
-app.title('SussyLauncher V1.6')
+app.title(f'SussyLauncher {version}')
 
 newsFontSize = 50
 while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
@@ -295,16 +310,14 @@ while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
 newsFont = tkfont(size=newsFontSize)
 
 
-main = tkframe(master=app, width=1000, height=1000,
-               corner_radius=15, fg_color='transparent')
+main = tkframe(master=app, width=1000, height=1000,corner_radius=15, fg_color='transparent')
 main.pack(padx=5, pady=5)
 
-title = tklabel(master=main, font=tkfont(size=40),
-                text='SussyLauncher V1', width=50, height=10)
-title.grid(row=0, column=1, padx=50, pady=0, stick='n')
+title = tklabel(master=main, font=tkfont(size=40),text=f'SussyLauncher {version}', width=50, height=10)
+title.grid(row=0, column=1, padx=50, pady=0, sticky='n')
 
 sideFrame = tkframe(master=main, width=100, height=200, corner_radius=15)
-sideFrame.grid(row=0, column=0, padx=0, pady=100, rowspan=4, stick='nw')
+sideFrame.grid(row=0, column=0, pady=50, padx=10, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
 
 
 for i in enumerate(pages):
@@ -312,9 +325,10 @@ for i in enumerate(pages):
     i = i[1]
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
-    print(i[1])
-    button = tkbutton(master=sideFrame, width=50, height=30, corner_radius=5,text=i, font=tkfont(size=20), command=pageCommands[index])
-    button.pack(padx=10, pady=10)
+    print(f'Initializing page: {i}')
+    a = 20-round(len(i)/5)
+    button = tkbutton(master=sideFrame, width=40, height=30, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
+    button.pack(padx=3, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
 contentFrame.grid(row=1, column=1, stick='n', pady=10)
@@ -359,13 +373,11 @@ for i in all_versions:
 launchFrame = tkframe(master=main, corner_radius=20)
 launchFrame.grid(row=2, column=1)
 
-launchSelector = tkOptionMenu(
-    master=launchFrame, corner_radius=15, values=versions)
+launchSelector = tkOptionMenu(master=launchFrame, corner_radius=15, values=versions)
 launchSelector.grid(column=0, row=0, pady=5, padx=5)
 
 
-launchButton = tkbutton(master=launchFrame, width=200, height=75,
-                        corner_radius=15, text='Install', font=tkfont(size=20), command=launch)
+launchButton = tkbutton(master=launchFrame, width=200, height=75,corner_radius=15, text='Install', font=tkfont(size=20), command=launch)
 launchButton.grid(column=0, row=1, pady=5, padx=5)
 
 launchProgress = tkProgressbar(master=launchFrame, corner_radius=15, mode='determinate', determinate_speed=0.001)

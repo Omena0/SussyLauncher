@@ -2,6 +2,10 @@
 
  Fuck microsoft's minecraft launcher! Ill just make my own!
 
+## Changelog
+
+[Changes here](changelog.md)
+
 ## How To Install
 
 - Make sure you have installed everything in dependencies.txt!!!
