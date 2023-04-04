@@ -83,12 +83,12 @@
    'PYSOURCE'),
   ('SussyLauncher V1.7',
    'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\SussyLauncher '
-   'V1.7.py',
+   'V1.7.pyw',
    'PYSOURCE')],
  [],
  False,
  False,
- 1680547144,
+ 1680626876,
  [('runw.exe',
    'C:\\Program '
    'Files\\Python311\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\runw.exe',

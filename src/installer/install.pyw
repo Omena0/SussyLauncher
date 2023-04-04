@@ -20,7 +20,12 @@ tki.set_appearance_mode('dark')
 debug = False
 
 appdata = os.getenv('appdata')
+pyPath =  sys.exec_prefix
+site_packages = pyPath + '\\Lib\\site-packages'
+
 print(f'{appdata=}')
+print(f'{pyPath=}')
+print(f'{site_packages=}')
 
 try:
     os.chdir('src/installer')
@@ -41,10 +46,11 @@ def install():
     checkbox.configure(state='disabled')
     installButton.configure(state='disabled')
 
-    # Generate script depending on {installPath}
+    # Generate script depending on {installPath} and {site_packages} path
     newContent = []
     for i in content:
-        cmd = i.replace('{{installPath}}', installPath.replace('\n', ''))
+        cmd = i.replace('{{install_path}}', installPath.replace('\n', ''))
+        cmd = cmd.replace('{{site_packages_path}}', site_packages)
         newContent.append(cmd)
     with open('scripts/installScript_Customised.bat', 'w') as file:
         file.writelines(newContent)

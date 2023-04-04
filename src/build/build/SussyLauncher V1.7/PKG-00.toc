@@ -74,7 +74,7 @@
    'PYSOURCE'),
   ('SussyLauncher V1.7',
    'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\SussyLauncher '
-   'V1.7.py',
+   'V1.7.pyw',
    'PYSOURCE')],
  True,
  False,

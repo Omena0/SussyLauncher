@@ -45,10 +45,13 @@ blur_background:
 font_size_multiplier:
 1.5
 
-# Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY
+# Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY [1 = True, 0 = False]
 fabric_saveData:
-1
+0
 
+# Name says it all [1 = True, 0 = False]
+leave_launcher_open:
+0
 
 """
 
@@ -62,6 +65,7 @@ try:
         blur_background    =    int(config[5])
         textSizeMultiplier =    float(config[9])
         fabric_saveData    =    int(config[13])
+        leave_launcher_open = int(config[17])
         
 except FileNotFoundError:
     with open('data/options.txt', 'w') as file:
@@ -70,7 +74,8 @@ except FileNotFoundError:
         # Set default values
         blur_background = 1
         textSizeMultiplier = 1
-        switch_mods = 1
+        fabric_saveData = 0
+        leave_launcher_open = False
         
 
 
@@ -153,6 +158,7 @@ def launch():
 
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
+    if not leave_launcher_open: app.destroy()
 
 
 def _launch_mc():
@@ -326,15 +332,14 @@ for i in enumerate(pages):
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
     print(f'Initializing page: {i}')
-    a = 22-round((len(i)+1)/5)
+    a = 25-round((len(i)+1)/3)
     button = tkbutton(master=sideFrame, width=40, height=30, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
     button.pack(padx=3, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
 contentFrame.grid(row=1, column=1, stick='n', pady=10, padx=10)
 
-newsLabel = tklabel(master=contentFrame, width=350, height=250,
-                    text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
+newsLabel = tklabel(master=contentFrame, width=350, height=250, text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
 newsLabel.pack(padx=20, pady=10)
 
 
@@ -357,7 +362,7 @@ class progressBar:
             size = size - 2
         newsLabel.configure(text=text, font=tkfont(size=size))
 
-    def setMax(self, ax):
+    def setMax(self, max):
         self.max = max
 
 
