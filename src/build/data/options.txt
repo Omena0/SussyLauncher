@@ -1,0 +1,16 @@
+#OPTIONS.py:
+# YOU CAN EDIT VALUES HERE!
+
+#Use the blurred version of the login background image [1 = True, 0 = False]
+blur_background:
+0
+
+# Makes the news text font bigger or smaller
+font_size_multiplier:
+1.5
+
+# Switch mods if on fabric [1 = True, 0 = False]
+switch_mods:
+1
+
+

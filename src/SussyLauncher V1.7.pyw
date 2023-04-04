@@ -311,13 +311,13 @@ newsFont = tkfont(size=newsFontSize)
 
 
 main = tkframe(master=app, width=1000, height=1000,corner_radius=15, fg_color='transparent')
-main.pack(padx=5, pady=5)
+main.pack(padx=10, pady=10)
 
 title = tklabel(master=main, font=tkfont(size=40),text=f'SussyLauncher {version}', width=50, height=10)
-title.grid(row=0, column=1, padx=50, pady=0, sticky='n')
+title.grid(row=0, column=1, padx=25, pady=0, sticky='n')
 
 sideFrame = tkframe(master=main, width=100, height=200, corner_radius=15)
-sideFrame.grid(row=0, column=0, pady=50, padx=10, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
+sideFrame.grid(row=0, column=0, pady=50, padx=5, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
 
 
 for i in enumerate(pages):
@@ -326,12 +326,12 @@ for i in enumerate(pages):
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
     print(f'Initializing page: {i}')
-    a = 20-round(len(i)/5)
+    a = 22-round((len(i)+1)/5)
     button = tkbutton(master=sideFrame, width=40, height=30, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
     button.pack(padx=3, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
-contentFrame.grid(row=1, column=1, stick='n', pady=10)
+contentFrame.grid(row=1, column=1, stick='n', pady=10, padx=10)
 
 newsLabel = tklabel(master=contentFrame, width=350, height=250,
                     text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
@@ -357,7 +357,7 @@ class progressBar:
             size = size - 2
         newsLabel.configure(text=text, font=tkfont(size=size))
 
-    def setMax(self, max):
+    def setMax(self, ax):
         self.max = max
 
 
