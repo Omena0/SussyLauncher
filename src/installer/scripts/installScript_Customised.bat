@@ -1,37 +1,69 @@
-rem echo off
+echo off
 cls
 
-rem # BUILD SCRIPT BY OMENA0MC
+echo .
+echo ###############################
+echo #  BUILD SCRIPT BY OMENA0MC   #
+echo ###############################
+echo .
 
 cd ../../..
 
-echo ###### Running automated build ######
 
-rem ##### BUILD SCRIPT #######
-echo ##### BUILD.CMD #####
+echo .
+echo #######################
+echo #  RUNNING AUTOMATED  #
+echo #        BUILD        #
+echo #######################
+echo .
 
-echo #### Building ####
+echo .
+echo #####################
+echo #     BUILDING      #
+echo #####################
+echo .
+
 pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "C:\Program Files\Python311\Lib\site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.pyw"
 pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "%appdata%\Python\Python311\site-packages\customtkinter;customtkinter" "src/SussyLauncher V1.7.pyw"
 
-echo #### Copying Files ####
+echo .
+echo #####################
+echo #     COPYING       #
+echo #####################
+echo .
 
+echo .
 echo ## Copying assets ##
+echo .
+
 xcopy "src/assets/*" "src/build/assets" /E /I /F /Y
 
+echo .
 echo ## Copying data ##
+echo .
+
 xcopy "src/data/*" "src/build/data" /E /I /F /Y
 
+echo .
 echo ## Copying libraries ##
+echo .
+
 xcopy "src/libraries/*" "src/build/libraries" /E /I /F /Y
 
-echo ##### BUILD DONE #####
+echo .
+echo #####################
+echo #     BUILD DONE    #
+echo #####################
+echo .
 
+echo .
+echo #####################
+echo #    INSTALLING     #
+echo #####################
+echo .
 
-rem # MOVE FILES TO INSTALLPATH
-
-echo ###### Moving files to installPath ######
 mkdir "C:\Users\aarne\AppData\Roaming\.SussyLauncher\"
 xcopy "src\build\" "C:\Users\aarne\AppData\Roaming\.SussyLauncher\" /E /I /F /Y
 xcopy "src\fabric_install.py" "C:\Users\aarne\AppData\Roaming\.SussyLauncher\" /E /I /F /Y
+
 py -c "import tkinter.messagebox;tkinter.messagebox.showinfo('Install complete!', 'SussyLauncher has been installed!')"

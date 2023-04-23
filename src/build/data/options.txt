@@ -3,14 +3,17 @@
 
 #Use the blurred version of the login background image [1 = True, 0 = False]
 blur_background:
-0
+1
 
 # Makes the news text font bigger or smaller
 font_size_multiplier:
 1.5
 
-# Switch mods if on fabric [1 = True, 0 = False]
-switch_mods:
+# Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY [1 = True, 0 = False]
+fabric_saveData:
 1
 
+# Name says it all [1 = True, 0 = False]
+leave_launcher_open:
+0
 

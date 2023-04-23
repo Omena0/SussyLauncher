@@ -11,7 +11,7 @@ from libraries.sandals import showInfo
 
 version = 'V1.7'
 
-print(f'SussyLauncher {version} build 13')
+print(f'SussyLauncher {version} build 14')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -39,7 +39,7 @@ optionsText = """#OPTIONS.py:
 
 #Use the blurred version of the login background image [1 = True, 0 = False]
 blur_background:
-0
+1
 
 # Makes the news text font bigger or smaller
 font_size_multiplier:
@@ -47,7 +47,7 @@ font_size_multiplier:
 
 # Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY [1 = True, 0 = False]
 fabric_saveData:
-0
+1
 
 # Name says it all [1 = True, 0 = False]
 leave_launcher_open:
@@ -170,6 +170,10 @@ def openPage(page):
     print(page)
     global currentPage
     currentPage = page
+    
+    with open('data/currentPage.txt', 'w') as file:
+        file.write(page)
+    
     if page == 'Install':
         launchButton.configure(text='Install')
         newsLabel.configure(text=defaultNewsText)
@@ -234,7 +238,9 @@ def login(enable_manual=True):
 
 latest_version = mcl.utils.get_latest_version()["release"]
 
-currentPage = 'Install'
+
+with open('data/currentPage.txt','r') as file:
+    currentPage = file.read()
 
 tki.set_appearance_mode('dark')
 tki.set_default_color_theme('blue')
@@ -389,5 +395,6 @@ launchProgress = tkProgressbar(master=launchFrame, corner_radius=15, mode='deter
 launchProgress.set(0)
 launchProgress.grid(column=0, row=2, pady=5, padx=5)
 
+openPage(currentPage)
 
 app.mainloop()
