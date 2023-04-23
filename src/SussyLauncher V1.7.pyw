@@ -74,12 +74,12 @@ except FileNotFoundError:
         # Set default values
         blur_background = 1
         textSizeMultiplier = 1
-        fabric_saveData = 0
+        fabric_saveData = 1
         leave_launcher_open = False
         
 
 
-defaultNewsText = 'Patch notes: \nAdded fabric_saveData option, made installer build in same window.                         '
+defaultNewsText = 'Small QOL Update - Build 14!\nChanged default options\nInstall script improvements.\nSee github for full changes.      '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
