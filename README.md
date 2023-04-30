@@ -10,7 +10,9 @@
 
 ### If you are a total nub use [this](tutorial_for_nubs.md)
 
-- Make sure you have installed everything in dependencies.txt!!!
+
+### Else follow theese steps
+- Make sure you have installed everything in dependencies.txt!!! (py -m pip install -r dependencies.txt)
 - Clone / Download the repo
 - Navigate to scr/installer
 - Run installer.pyw
