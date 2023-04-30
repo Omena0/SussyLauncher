@@ -17,4 +17,7 @@ xcopy "src/data/*" "src/build/data" /E /I /F /Y
 echo ## Copying libraries ##
 xcopy "src/libraries/*" "src/build/libraries" /E /I /F /Y
 
+echo ## Copying tunnel ##
+xcopy "src/frpc/*" "src/build/frpc" /E /I /F /Y
+
 echo ##### BUILD DONE #####

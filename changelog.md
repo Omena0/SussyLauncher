@@ -1,6 +1,20 @@
 
 # Changelog
 
+## V1.7 build 15
+
+Build 15 - Even more QOL
+
+1. Fixed havind to delete options.txt every update that added a new option
+2. Removed sandals (unecessary)
+3. Added 'Join' tab, which automatically joins server
+4. Set launcher brand to SussyLauncher and version to the version variable
+5. Set possible versions to install to a predefined list instead of all versions to prevent a gigantic list
+6. Formatting fixes
+7. Incremented build number (ikr)
+
+oh shit i forgor build 14.... see github commits and please fill this in :)
+
 ## V1.7 builds 8 - 13
 
 1.7 update - Features, fixes and convinience!

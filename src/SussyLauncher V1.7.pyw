@@ -7,11 +7,12 @@ import customtkinter as tki
 import json
 import os
 from threading import Thread
-from libraries.sandals import showInfo
+from tkinter import messagebox
+showInfo = messagebox.showinfo
 
 version = 'V1.7'
 
-print(f'SussyLauncher {version} build 14')
+print(f'SussyLauncher {version} build 15')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -62,12 +63,12 @@ try:
         config = []
         for line in lines: line = line.replace('\n',''); config.append(line)
         
-        blur_background    =    int(config[5])
-        textSizeMultiplier =    float(config[9])
-        fabric_saveData    =    int(config[13])
-        leave_launcher_open = int(config[17])
+        blur_background     =  int(config[5])
+        textSizeMultiplier  =  float(config[9])
+        fabric_saveData     =  int(config[13])
+        leave_launcher_open =  int(config[17])
         
-except FileNotFoundError:
+except (FileNotFoundError,IndexError):
     with open('data/options.txt', 'w') as file:
         file.write(optionsText) # Create and add default settings
         
@@ -75,7 +76,7 @@ except FileNotFoundError:
         blur_background = 1
         textSizeMultiplier = 1
         fabric_saveData = 1
-        leave_launcher_open = False
+        leave_launcher_open = 0
         
 
 
@@ -109,12 +110,13 @@ def install():
     mcl.install.install_minecraft_version(launchSelector.get(
     ), minecraft_directory=minecraft_directory, callback=callback)
     print('Install complete!')
-    showInfo('Done!', 'Install complete!')
+    showInfo('Done!', 'Install complete!\nPlease restart the launcher!!!')
     newsLabel.configure(text=defaultNewsText)
     launchProgress.stop()
 
 
 def launch():
+    global currentPage
     if not logged_in:
         showInfo('You arent logged in!',
                  'Log in with a microsoft account to continue.')
@@ -126,10 +128,15 @@ def launch():
         Thread(target=install, daemon=True, name='Installer').start()
         print(f'[LAUNCHER] Installed {launchSelector.get()}!')
         return
-
+    
+    if currentPage == 'Join':
+        join = True
+    else:
+        join = False
+    
     print(f'[LAUNCHER] Launching {currentPage}')
 
-    if pages == ['Install']:
+    if pages == ['Install','Join']:
         showInfo('Minecraft missing!', 'You need to install a version first!')
         return
 
@@ -143,14 +150,24 @@ def launch():
         print('Non-fabric version detected!!!')
         gameDirectory = gamedir
     
+    port = '25565'
+    
     options = {
         "username": login_data["name"],
         "uuid": login_data["id"],
         "token": login_data["access_token"],
         "jvmArguments": ['-Xmx4G', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseG1GC', '-XX:G1NewSizePercent=20', '-XX:G1ReservePercent=20', '-XX:MaxGCPauseMillis=50', '-XX:G1HeapRegionSize=32M'],
         "gameDirectory": gameDirectory,
-
+        "executablePath": "java", # The path to the java executable
+        "defaultExecutablePath": "java", # The path to the java executable if the version.json has none
+        "launcherName": "SussyLauncher", # The name of your launcher
+        "launcherVersion": version # The version of your launcher
     }
+    
+    if join:
+        currentPage = launchSelector.get()
+        options["server"] = ip.get()
+        options["port"] = port
 
     global minecraft_command
     minecraft_command = mcl.command.get_minecraft_command(
@@ -158,7 +175,7 @@ def launch():
 
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
-    if not leave_launcher_open: app.destroy()
+    if leave_launcher_open == 0: app.destroy()
 
 
 def _launch_mc():
@@ -176,13 +193,25 @@ def openPage(page):
     
     if page == 'Install':
         launchButton.configure(text='Install')
-        newsLabel.configure(text=defaultNewsText)
+        newsLabel.configure(text=defaultNewsText,height=250)
         launchSelector.grid_configure(row=0, column=0)
+        launchSelector.configure(values=versions)
+        ipEntry.place_configure(x=999, y=999)
+        
+    elif page == 'Join':
+        launchButton.configure(text='Join')
+        newsLabel.configure(text='Automatically join server with mc version:',height=210)
+        launchSelector.grid_configure(row=1, column=0)
+        launchSelector.configure(values=installed_version_ids)
+        ipEntry.grid_configure(row=0,column=0)
+    
     else:
         launchButton.configure(text='Launch')
         text = f'Ready to launch.\nClick "launch" to launch {page}!'
-        newsLabel.configure(text=text, font=newsFont)
+        newsLabel.configure(text=text, font=newsFont,height=288)
         launchSelector.place_configure(x=999, y=999)
+        launchSelector.configure(values=versions)
+        ipEntry.place_configure(x=999, y=999)
 
 
 def login(enable_manual=True):
@@ -297,7 +326,7 @@ if not logged_in:
     sys.exit()
 
 # INIT MAIN GUI
-pages = ['Install']
+pages = ['Install','Join']
 
 for i in installed_versions:
     i = i['id']
@@ -375,11 +404,7 @@ class progressBar:
 progressBar = progressBar()
 
 
-versions = []
-for i in all_versions:
-    if i['type'] in ['snapshot', 'old_alpha', 'old_beta']:
-        continue
-    versions.append(i['id'])
+versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
 
 launchFrame = tkframe(master=main, corner_radius=20)
 launchFrame.grid(row=2, column=1)
@@ -389,11 +414,17 @@ launchSelector.grid(column=0, row=0, pady=5, padx=5)
 
 
 launchButton = tkbutton(master=launchFrame, width=200, height=75,corner_radius=15, text='Install', font=tkfont(size=20), command=launch)
-launchButton.grid(column=0, row=1, pady=5, padx=5)
+launchButton.grid(column=0, row=2, pady=5, padx=5)
 
 launchProgress = tkProgressbar(master=launchFrame, corner_radius=15, mode='determinate', determinate_speed=0.001)
 launchProgress.set(0)
-launchProgress.grid(column=0, row=2, pady=5, padx=5)
+launchProgress.grid(column=0, row=3, pady=5, padx=5)
+
+# Vars
+ip = tki.Variable(master=launchFrame,name='ip',value='mc.hypixel.net')
+
+ipEntry = tki.CTkEntry(master=launchFrame,width=175,height=40,corner_radius=15,placeholder_text='IP ADDRESS',font=tkfont(size=20),textvariable=ip)
+ipEntry.grid(column=0, row=0)
 
 openPage(currentPage)
 

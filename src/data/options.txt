@@ -11,9 +11,13 @@ font_size_multiplier:
 
 # Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY [1 = True, 0 = False]
 fabric_saveData:
-1
+0
 
 # Name says it all [1 = True, 0 = False]
 leave_launcher_open:
-0
+1
+
+# Run tunnel to be able to connect to servers exclusive to SussyLauncher [1 = True, 0 = False]
+tunnel:
+1
 
