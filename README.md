@@ -8,6 +8,8 @@
 
 ## How To Install
 
+### If you are a total nub use [this](tutorial_for_nubs.md)
+
 - Make sure you have installed everything in dependencies.txt!!!
 - Clone / Download the repo
 - Navigate to scr/installer
