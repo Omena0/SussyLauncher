@@ -11,13 +11,30 @@ font_size_multiplier:
 
 # Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY [1 = True, 0 = False]
 fabric_saveData:
-0
+1
 
 # Name says it all [1 = True, 0 = False]
 leave_launcher_open:
+0
+
+# Whitelist you on Omena0MC's servers automatically when launching, BUT YOU NEED TO ASK OMENA TO GIVE U AN ACCOUNT!! [1 = True, 0 = False]
+whitelist:
 1
 
-# Run tunnel to be able to connect to servers exclusive to SussyLauncher [1 = True, 0 = False]
-tunnel:
-1
+# Whitelist username (same as minecraft)
+username:
+Omena0MC
+
+# Whitelist password (dont worry it is hashed immidiately)
+password:
+1234
+
+
+### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
+
+# Ip for whitelist server
+whitelist_ip:
+127.0.0.1
+
+
 

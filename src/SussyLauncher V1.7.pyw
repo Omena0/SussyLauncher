@@ -7,12 +7,13 @@ import customtkinter as tki
 import json
 import os
 from threading import Thread
+import socket
 from tkinter import messagebox
 showInfo = messagebox.showinfo
 
 version = 'V1.7'
 
-print(f'SussyLauncher {version} build 15')
+print(f'SussyLauncher {version} build 17')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -22,6 +23,8 @@ tkscrollbar = tki.CTkScrollbar
 tkProgressbar = tki.CTkProgressBar
 tkOptionMenu = tki.CTkOptionMenu
 tkCanvas = tki.CTkCanvas
+
+s = socket.socket()
 
 ### SET ALL THE VALUES BELLOW TO FALSE BEFORE BUILDING! ###
 
@@ -54,33 +57,63 @@ fabric_saveData:
 leave_launcher_open:
 0
 
+# Whitelist you on Omena0MC's servers automatically when launching, BUT YOU NEED TO ASK OMENA TO GIVE U AN ACCOUNT!! [1 = True, 0 = False]
+whitelist:
+1
+
+# Whitelist username (same as minecraft)
+username:
+Example_1234
+
+# Whitelist password (dont worry it is hashed immidiately)
+password:
+Example_Password_1234
+
+
+### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
+
+# Ip for whitelist server
+whitelist_ip:
+127.0.0.1
+
+
+
 """
 
 
 try:
     with open('data/options.txt') as config:
-        lines = config.readlines()
-        config = []
-        for line in lines: line = line.replace('\n',''); config.append(line)
+        config = config.read().split('\n')
         
         blur_background     =  int(config[5])
         textSizeMultiplier  =  float(config[9])
         fabric_saveData     =  int(config[13])
         leave_launcher_open =  int(config[17])
+        whitelist           =  int(config[21])
+        whitelist_username  =  str(config[25])
+        whitelist_password  =  str(config[29])
+        whitelist_ip_addr   =  '127.0.0.1'
+        whitelist_port      =  5000
+        
         
 except (FileNotFoundError,IndexError):
     with open('data/options.txt', 'w') as file:
         file.write(optionsText) # Create and add default settings
         
         # Set default values
-        blur_background = 1
-        textSizeMultiplier = 1
-        fabric_saveData = 1
+        blur_background     = 1
+        textSizeMultiplier  = 1
+        fabric_saveData     = 1
         leave_launcher_open = 0
+        whitelist           = 0
+        whitelist_username  = ''
+        whitelist_password  = ''
+        whitelist_ip_addr   = '127.0.0.1'
+        whitelist_port      = 5000
         
 
 
-defaultNewsText = 'Small QOL Update - Build 14!\nChanged default options\nInstall script improvements.\nSee github for full changes.      '
+defaultNewsText = 'More QOL and whitelisting - See repo changelog.md!\nTo make an account DM Omena0#3610.'
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
@@ -115,6 +148,24 @@ def install():
     launchProgress.stop()
 
 
+def whitelist():
+    print('Attempting to whitelist...')
+    try: s.connect((whitelist_ip_addr,whitelist_port))
+    except: print('Could not connect! Is the server online???')
+    
+    s.send(f'GET TOKEN|{whitelist_username}|{whitelist_password}'.encode())
+    token = s.recv(2048).decode()
+    print(token)
+    if token.startswith('TOKEN'):
+        s.send(f'REQUEST WHITELIST|{token}'.encode())
+        a = s.recv(2048).decode()
+        print(a)
+    else:
+        #showInfo('Invalid Credentials','Invalid Whitelist Credentials..')
+        print('Invalid credentials')
+    
+    
+
 def launch():
     global currentPage
     if not logged_in:
@@ -126,7 +177,7 @@ def launch():
             showInfo('Version already installed!',f'The version {launchSelector.get()} is a lready installed in "files/versions"! Install cancelled!')
         print(f'[LAUNCHER] Installing {launchSelector.get()}!')
         Thread(target=install, daemon=True, name='Installer').start()
-        print(f'[LAUNCHER] Installed {launchSelector.get()}!')
+        print(f'[LAUNCHER] Installed {launchSelector.get()}! RESTART')
         return
     
     if currentPage == 'Join':
@@ -158,8 +209,6 @@ def launch():
         "token": login_data["access_token"],
         "jvmArguments": ['-Xmx4G', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseG1GC', '-XX:G1NewSizePercent=20', '-XX:G1ReservePercent=20', '-XX:MaxGCPauseMillis=50', '-XX:G1HeapRegionSize=32M'],
         "gameDirectory": gameDirectory,
-        "executablePath": "java", # The path to the java executable
-        "defaultExecutablePath": "java", # The path to the java executable if the version.json has none
         "launcherName": "SussyLauncher", # The name of your launcher
         "launcherVersion": version # The version of your launcher
     }
@@ -170,9 +219,11 @@ def launch():
         options["port"] = port
 
     global minecraft_command
-    minecraft_command = mcl.command.get_minecraft_command(
-        currentPage, minecraft_directory, options)
+    minecraft_command = mcl.command.get_minecraft_command(currentPage, minecraft_directory, options)
 
+    # Get whitelisted :)
+    Thread(target=whitelist,daemon=True).start()
+    
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
     if leave_launcher_open == 0: app.destroy()

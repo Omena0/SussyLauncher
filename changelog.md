@@ -1,6 +1,16 @@
 
 # Changelog
 
+## V1.7 build 17
+
+Make whitelisting system not block other code so minecraft starts about 1 second faster! (i know this is most important change since V1 :))
+
+## V1.7 build 16
+
+Build 16 - Whitelist SussyLauncher users!
+
+1. Created a seperate server for managing whitelist.
+
 ## V1.7 build 15
 
 Build 15 - Even more QOL
