@@ -13,7 +13,7 @@ showInfo = messagebox.showinfo
 
 version = 'V1.7'
 
-print(f'SussyLauncher {version} build 17')
+print(f'SussyLauncher {version} build 18')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -102,7 +102,7 @@ except (FileNotFoundError,IndexError):
         
         # Set default values
         blur_background     = 1
-        textSizeMultiplier  = 1
+        textSizeMultiplier  = 1.5
         fabric_saveData     = 1
         leave_launcher_open = 0
         whitelist           = 0
@@ -113,7 +113,7 @@ except (FileNotFoundError,IndexError):
         
 
 
-defaultNewsText = 'More QOL and whitelisting - See repo changelog.md!\nTo make an account DM Omena0#3610.'
+defaultNewsText = 'Build 18: Small adjustments.\nDynamic font size and more!                     '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
@@ -131,6 +131,12 @@ REDIRECT_URL = 'http://localhost/returnUrl'
 SECRET = 'E2V8Q~Y-QIJBxfo4td2E5fTShej0XSeAPZgzGbMA'
 
 # Functions
+
+def get_font_size(text):
+    size = 50
+    while round(size*len(text)) > 1500:
+        size = size - 1
+    return size
 
 
 def install():
@@ -169,8 +175,7 @@ def whitelist():
 def launch():
     global currentPage
     if not logged_in:
-        showInfo('You arent logged in!',
-                 'Log in with a microsoft account to continue.')
+        showInfo('You arent logged in!','Log in with a microsoft account to continue.')
         return
     if currentPage == 'Install':
         if launchSelector.get() in installed_versions:
@@ -244,14 +249,15 @@ def openPage(page):
     
     if page == 'Install':
         launchButton.configure(text='Install')
-        newsLabel.configure(text=defaultNewsText,height=250)
+        newsLabel.configure(text=defaultNewsText,height=250,font=newsFont)
         launchSelector.grid_configure(row=0, column=0)
         launchSelector.configure(values=versions)
         ipEntry.place_configure(x=999, y=999)
         
     elif page == 'Join':
         launchButton.configure(text='Join')
-        newsLabel.configure(text='Automatically join server with mc version:',height=210)
+        text = 'Automatically join server with mc version:'
+        newsLabel.configure(text=text,height=210,font=tkfont(size=get_font_size(text)))
         launchSelector.grid_configure(row=1, column=0)
         launchSelector.configure(values=installed_version_ids)
         ipEntry.grid_configure(row=0,column=0)
@@ -259,7 +265,7 @@ def openPage(page):
     else:
         launchButton.configure(text='Launch')
         text = f'Ready to launch.\nClick "launch" to launch {page}!'
-        newsLabel.configure(text=text, font=newsFont,height=288)
+        newsLabel.configure(text=text, font=tkfont(size=get_font_size(text)),height=288)
         launchSelector.place_configure(x=999, y=999)
         launchSelector.configure(values=versions)
         ipEntry.place_configure(x=999, y=999)
@@ -285,17 +291,14 @@ def login(enable_manual=True):
             file.write(json.dumps(login_data))
         logged_in = True
         
-        # Dont show "Logged in!" msgbox when already has logged in before
-        #showInfo('Logged in!', f'Logged in as {login_data["name"]}')
 
     # Otherwise ask the user to log in manually and store login info
     except Exception as e:
         if not enable_manual:
             return
         print(e)
-        login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(
-            CLIENT_ID, REDIRECT_URL)
-        w.open(login_url, 1, True)
+        login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(CLIENT_ID, REDIRECT_URL)
+        w.open(login_url, 2, True)
         code_url = tki.CTkInputDialog(title='Enter URL', text='Enter the URL where you were redirected to after signing in.').get_input()
         auth_code = mcl.microsoft_account.get_auth_code_from_url(code_url)
         # Get the login data
@@ -409,7 +412,7 @@ title = tklabel(master=main, font=tkfont(size=40),text=f'SussyLauncher {version}
 title.grid(row=0, column=1, padx=25, pady=0, sticky='n')
 
 sideFrame = tkframe(master=main, width=100, height=200, corner_radius=15)
-sideFrame.grid(row=0, column=0, pady=50, padx=5, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
+sideFrame.grid(row=0, column=0, pady=25, padx=5, ipady=10, ipadx=10, rowspan=100, sticky='NSEW')
 
 
 for i in enumerate(pages):
@@ -418,14 +421,14 @@ for i in enumerate(pages):
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
     print(f'Initializing page: {i}')
-    a = 25-round((len(i)+1)/3)
+    a = 25-round((len(i)+1)/2)
     button = tkbutton(master=sideFrame, width=40, height=30, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
     button.pack(padx=3, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
 contentFrame.grid(row=1, column=1, stick='n', pady=10, padx=10)
 
-newsLabel = tklabel(master=contentFrame, width=350, height=250, text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
+newsLabel = tklabel(master=contentFrame, width=350, height=200, text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
 newsLabel.pack(padx=20, pady=10)
 
 
@@ -478,5 +481,9 @@ ipEntry = tki.CTkEntry(master=launchFrame,width=175,height=40,corner_radius=15,p
 ipEntry.grid(column=0, row=0)
 
 openPage(currentPage)
+
+app.lift()
+app.attributes('-topmost', True)
+app.attributes('-topmost', False)
 
 app.mainloop()
