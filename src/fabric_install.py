@@ -1,7 +1,5 @@
 import minecraft_launcher_lib as mcl
-import tkinter as tk
-import customtkinter as tki
-from libraries.sandals import askString, showInfo
+from tkinter import messagebox
 
 print('Select minecraft version:')
 version = input('> ')
@@ -35,4 +33,4 @@ callback = {
 
 mcl.fabric.install_fabric(version, mc_dir, fabric_version, callback)
 
-showInfo('Fabric succesfully installed!',f'Fabric {version} succesfully installed.')
+messagebox.showinfo('Fabric succesfully installed!',f'Fabric {version} succesfully installed.')
