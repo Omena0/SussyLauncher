@@ -8,8 +8,14 @@ import json
 import os
 from threading import Thread
 import socket
+import datetime as t
 from tkinter import messagebox
 showInfo = messagebox.showinfo
+
+# Rick roll on april first :)
+if (t.date.day, t.date.month) == (4,1):
+    print('April 1st (get rickrolled lmao)')
+    w.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ',2,True)
 
 version = 'V1.7'
 
