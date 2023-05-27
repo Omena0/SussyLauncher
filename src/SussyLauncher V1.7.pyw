@@ -1,3 +1,6 @@
+# SussyLauncher By Omena0MC
+# https://github.com/Omena0/SussyLauncher
+
 import sys
 import subprocess
 import webbrowser as w
