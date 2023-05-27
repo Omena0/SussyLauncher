@@ -19,7 +19,7 @@ if (t.date.day, t.date.month) == (4,1):
 
 version = 'V1.7'
 
-print(f'SussyLauncher {version} build 18')
+print(f'SussyLauncher {version} build 19')
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
@@ -63,8 +63,8 @@ fabric_saveData:
 leave_launcher_open:
 0
 
-# Whitelist you on Omena0MC's servers automatically when launching, BUT YOU NEED TO ASK OMENA TO GIVE U AN ACCOUNT!! [1 = True, 0 = False]
-whitelist:
+# Whitelist you on some servers that support this project (i might post it to github) [1 = True, 0 = False]
+enable_whitelist:
 1
 
 # Whitelist username (same as minecraft)
@@ -86,40 +86,49 @@ whitelist_ip:
 
 """
 
+def load_config():
+    global blur_background,\
+        textSizeMultiplier,\
+        fabric_saveData,\
+        leave_launcher_open,\
+        enable_whitelist,\
+        whitelist_username,\
+        whitelist_password,\
+        whitelist_ip_addr,\
+        whitelist_port
+    try:
+        with open('data/options.txt') as config:
+            config = config.read().split('\n')
 
-try:
-    with open('data/options.txt') as config:
-        config = config.read().split('\n')
-        
-        blur_background     =  int(config[5])
-        textSizeMultiplier  =  float(config[9])
-        fabric_saveData     =  int(config[13])
-        leave_launcher_open =  int(config[17])
-        whitelist           =  int(config[21])
-        whitelist_username  =  str(config[25])
-        whitelist_password  =  str(config[29])
-        whitelist_ip_addr   =  '127.0.0.1'
-        whitelist_port      =  5000
-        
-        
-except (FileNotFoundError,IndexError):
-    with open('data/options.txt', 'w') as file:
-        file.write(optionsText) # Create and add default settings
-        
-        # Set default values
-        blur_background     = 1
-        textSizeMultiplier  = 1.5
-        fabric_saveData     = 1
-        leave_launcher_open = 0
-        whitelist           = 0
-        whitelist_username  = ''
-        whitelist_password  = ''
-        whitelist_ip_addr   = '127.0.0.1'
-        whitelist_port      = 5000
-        
+            blur_background     =  int(config[5])
+            textSizeMultiplier  =  float(config[9])
+            fabric_saveData     =  int(config[13])
+            leave_launcher_open =  int(config[17])
+            enable_whitelist           =  int(config[21])
+            whitelist_username  =  str(config[25])
+            whitelist_password  =  str(config[29])
+            whitelist_ip_addr   =  '127.0.0.1'
+            whitelist_port      =  5000
 
 
-defaultNewsText = 'Build 18: Small adjustments.\nDynamic font size and more!                     '
+    except (FileNotFoundError,IndexError):
+        with open('data/options.txt', 'w') as file:
+            file.write(optionsText) # Create and add default settings
+
+            # Set default values
+            blur_background     = 1
+            textSizeMultiplier  = 1.5
+            fabric_saveData     = 1
+            leave_launcher_open = 0
+            enable_whitelist           = 0
+            whitelist_username  = ''
+            whitelist_password  = ''
+            whitelist_ip_addr   = '127.0.0.1'
+            whitelist_port      = 5000
+        
+load_config()
+
+defaultNewsText = 'Build 19: Threaded login, Now logs in while initializing gui!                     '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
@@ -181,7 +190,7 @@ def whitelist():
 def launch():
     global currentPage
     if not logged_in:
-        showInfo('You arent logged in!','Log in with a microsoft account to continue.')
+        showInfo('Not logged in!','Try again later.\n(About a second)')
         return
     if currentPage == 'Install':
         if launchSelector.get() in installed_versions:
@@ -199,7 +208,7 @@ def launch():
     print(f'[LAUNCHER] Launching {currentPage}')
 
     if pages == ['Install','Join']:
-        showInfo('Minecraft missing!', 'You need to install a version first!')
+        showInfo('Minecraft missing!', 'You need to install a version first!\nHow did you get this error? Create an issue on github or contact Omena0#3610 on discord')
         return
 
     global login_data
@@ -233,7 +242,8 @@ def launch():
     minecraft_command = mcl.command.get_minecraft_command(currentPage, minecraft_directory, options)
 
     # Get whitelisted :)
-    Thread(target=whitelist,daemon=True).start()
+    if enable_whitelist:
+        Thread(target=whitelist,daemon=True, name='Whitelisting client').start()
     
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
@@ -277,10 +287,10 @@ def openPage(page):
         ipEntry.place_configure(x=999, y=999)
 
 
-def login(enable_manual=True):
+
+def _login(auto=False):
     global login_data, logged_in
     if logged_in:
-        loginApp.destroy()
         return
     # Try login from stored login info
     print('[LAUNCHER] Logging in...')
@@ -300,8 +310,7 @@ def login(enable_manual=True):
 
     # Otherwise ask the user to log in manually and store login info
     except Exception as e:
-        if not enable_manual:
-            return
+        if auto: return 'Failed'
         print(e)
         login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(CLIENT_ID, REDIRECT_URL)
         w.open(login_url, 2, True)
@@ -317,13 +326,43 @@ def login(enable_manual=True):
             file.write(json.dumps(login_data))
 
         logged_in = True
-        showInfo('Logged in!', f'Logged in as {login_data["name"]}')
 
-    file.close()
-    loginApp.destroy()
+def login():
+    if _login(auto=True) == 'Failed':
+        loginApp = App()
+        loginApp.title('Log in to SussyLaucher')
+
+        # Background
+        main = tkframe(master=loginApp, width=1000, height=1000)
+        main.pack()
+
+        canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
+        canvas.pack(expand=True, fill='both')
+
+        if blur_background == 1:
+            bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
+        else:
+            bgImage = tk.PhotoImage(file='assets/bg.png')
+        bgImage = bgImage.zoom(4, 6)
+        bgImage = bgImage.subsample(10)
+
+        canvas.create_image(0, 0, image=bgImage, anchor='nw')
+        canvas.create_text(375, 150, text='Log in to SussyLauncher:',font=tkfont(size=60), fill='white', anchor='center')
+
+        login = tkbutton(master=main, text='Log in', font=tkfont(
+            size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=_login)
+        login.place(x=270, y=375)
+
+        loginApp.wm_attributes('-transparentcolor', 'grey')
+
+        loginApp.mainloop()
+
+
+# >THREADED LOGIN
+
+Thread(target=login,daemon=True, name='Microsoft Login').start()
 
 # PREP FOR GUI
-
 
 latest_version = mcl.utils.get_latest_version()["release"]
 
@@ -334,12 +373,6 @@ with open('data/currentPage.txt','r') as file:
 tki.set_appearance_mode('dark')
 tki.set_default_color_theme('blue')
 
-# LOGIN SCREEN
-
-# Try login without opening browser in case the auto login fails.
-try:
-    login(enable_manual=False)
-except: pass
 
 class App(tki.CTk):
     def __init__(self):
@@ -348,42 +381,6 @@ class App(tki.CTk):
         if not debug:
             self.resizable(False, False)
 
-if not logged_in:
-    
-
-
-    loginApp = App()
-    loginApp.title('Log in to SussyLaucher')
-
-    # Background
-    main = tkframe(master=loginApp, width=1000, height=1000)
-    main.pack()
-
-    canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
-    canvas.pack(expand=True, fill='both')
-
-    if blur_background == 1:
-        bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
-    else:
-        bgImage = tk.PhotoImage(file='assets/bg.png')
-    bgImage = bgImage.zoom(4, 6)
-    bgImage = bgImage.subsample(10)
-
-    canvas.create_image(0, 0, image=bgImage, anchor='nw')
-    canvas.create_text(375, 150, text='Log in to SussyLauncher:',
-                       font=tkfont(size=60), fill='white', anchor='center')
-
-    login = tkbutton(master=main, text='Log in', font=tkfont(
-        size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=login)
-    login.place(x=270, y=375)
-
-    loginApp.wm_attributes('-transparentcolor', 'grey')
-
-    loginApp.mainloop()
-
-# CHECK LOGIN STATUS
-if not logged_in:
-    sys.exit()
 
 # INIT MAIN GUI
 pages = ['Install','Join']
