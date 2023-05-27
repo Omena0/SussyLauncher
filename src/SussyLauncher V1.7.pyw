@@ -1,19 +1,7 @@
 # SussyLauncher By Omena0MC
 # https://github.com/Omena0/SussyLauncher
 
-import sys
-import subprocess
-import webbrowser as w
-import minecraft_launcher_lib as mcl
-import tkinter as tk
-import customtkinter as tki
-import json
-import os
-from threading import Thread
-import socket
-import datetime as t
-from tkinter import messagebox
-showInfo = messagebox.showinfo
+from importer import *
 
 # Rick roll on april first :)
 if (t.date.day, t.date.month) == (4,1):
@@ -24,21 +12,12 @@ version = 'V1.7'
 
 print(f'SussyLauncher {version} build 19')
 
-tkfont = tki.CTkFont
-tkframe = tki.CTkFrame
-tkbutton = tki.CTkButton
-tklabel = tki.CTkLabel
-tkscrollbar = tki.CTkScrollbar
-tkProgressbar = tki.CTkProgressBar
-tkOptionMenu = tki.CTkOptionMenu
-tkCanvas = tki.CTkCanvas
-
 s = socket.socket()
 
 ### SET ALL THE VALUES BELLOW TO FALSE BEFORE BUILDING! ###
 
 # Allows the window to be resized. might add more to this value.
-debug = False
+debug = True
 
 # Set this to true to not have to log in, good for UI testing.
 # DISCLAIMER: YOU CANT RUN MC WITHOUT SIGNING IN!!!
@@ -90,6 +69,7 @@ whitelist_ip:
 """
 
 def load_config():
+    print('[CONFIG] Loading config...')
     global blur_background,\
         textSizeMultiplier,\
         fabric_saveData,\
@@ -128,7 +108,8 @@ def load_config():
             whitelist_password  = ''
             whitelist_ip_addr   = '127.0.0.1'
             whitelist_port      = 5000
-        
+
+print('[LAUNCHER] LOADING CONFIG') 
 load_config()
 
 defaultNewsText = 'Build 19: Threaded login, Now logs in while initializing gui!                     '
@@ -141,7 +122,7 @@ installed_versions = mcl.utils.get_installed_versions('files/')
 installed_version_ids = []
 all_versions = mcl.utils.get_available_versions('files/')
 for i in installed_versions:
-    print(f'Version found: {i["id"]}')
+    print(f'[LAUNCHER] Version found: {i["id"]}')
     installed_version_ids.append(i['id'])
 
 CLIENT_ID = '347cf8bd-c8d1-4967-8104-ee7493cfbf2f'
@@ -149,10 +130,11 @@ REDIRECT_URL = 'http://localhost/returnUrl'
 SECRET = 'E2V8Q~Y-QIJBxfo4td2E5fTShej0XSeAPZgzGbMA'
 
 # Functions
+print('[LAUNCHER] Initializing functions')
 
-def get_font_size(text):
+def get_font_size(text,space=1500):
     size = 50
-    while round(size*len(text)) > 1500:
+    while round(size*len(text)) > space:
         size = size - 1
     return size
 
@@ -292,7 +274,7 @@ def openPage(page):
 
 
 def _login(auto=False):
-    global login_data, logged_in
+    global login_data, logged_in, username, skins
     if logged_in:
         return
     # Try login from stored login info
@@ -361,6 +343,17 @@ def login():
         loginApp.mainloop()
 
 
+def mainloop():
+    global login_data, logged_in
+    while True:
+        if logged_in:
+            try:
+                name = login_data["name"]
+                a = get_font_size(name,space=170)
+                playerName.configure(text=f'Logged in as:\n{name}',font=tkfont(size=a))
+            except: pass
+        sleep(0.5)
+
 # >THREADED LOGIN
 
 Thread(target=login,daemon=True, name='Microsoft Login').start()
@@ -369,6 +362,22 @@ Thread(target=login,daemon=True, name='Microsoft Login').start()
 
 latest_version = mcl.utils.get_latest_version()["release"]
 
+async def async_head_render():
+    while not logged_in: pass
+    p = minepi.Player(uuid=login_data['id'])
+    await p.initialize()
+
+    await p.skin.render_head(display_hair=True,vr=0,hr=0)
+    
+    p.skin.head.save('data/head.png', format='png')
+    
+
+def head_render():
+    print('[MINEPI] Rendering player head..')
+    asyncio.run(async_head_render())
+
+print('[LAUNCHER] Starting player head renderer..')
+Thread(target=head_render,daemon=True,name='Head renderer').start()
 
 with open('data/currentPage.txt','r') as file:
     currentPage = file.read()
@@ -376,14 +385,37 @@ with open('data/currentPage.txt','r') as file:
 tki.set_appearance_mode('dark')
 tki.set_default_color_theme('blue')
 
-
+print('[LAUNCHER] Initializing classes')
 class App(tki.CTk):
     def __init__(self):
         super().__init__()
         self.geometry(f"{600}x{500}")
         if not debug:
             self.resizable(False, False)
+            
+class progressBar:
+    def __init__(self):
+        self.status = 'None'
+        self.progress = 0
+        self.max = 1
 
+    def setStatus(self, status):
+        self.status = status
+
+    def setProgress(self, progress):
+        self.progress = progress
+        print(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
+        launchProgress.set(progress/self.max)
+        text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
+        size = 100
+        while round(size*len(text)/1.3) > 2050:
+            size = size - 2
+        newsLabel.configure(text=text, font=tkfont(size=size))
+
+    def setMax(self, max):
+        self.max = max
+
+print('[LAUNCHER] Initializing Main GUI')
 
 # INIT MAIN GUI
 pages = ['Install','Join']
@@ -410,7 +442,6 @@ while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
 
 newsFont = tkfont(size=newsFontSize)
 
-
 main = tkframe(master=app, width=1000, height=1000,corner_radius=15, fg_color='transparent')
 main.pack(padx=10, pady=10)
 
@@ -426,7 +457,7 @@ for i in enumerate(pages):
     i = i[1]
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
-    print(f'Initializing page: {i}')
+    print(f'[LAUNCHER] Initializing page: {i}')
     a = 25-round((len(i)+1)/2)
     button = tkbutton(master=sideFrame, width=40, height=30, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
     button.pack(padx=3, pady=10)
@@ -437,37 +468,15 @@ contentFrame.grid(row=1, column=1, stick='n', pady=10, padx=10)
 newsLabel = tklabel(master=contentFrame, width=350, height=200, text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
 newsLabel.pack(padx=20, pady=10)
 
-
-class progressBar:
-    def __init__(self):
-        self.status = 'None'
-        self.progress = 0
-        self.max = 1
-
-    def setStatus(self, status):
-        self.status = status
-
-    def setProgress(self, progress):
-        self.progress = progress
-        print(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
-        launchProgress.set(progress/self.max)
-        text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
-        size = 100
-        while round(size*len(text)/1.3) > 2050:
-            size = size - 2
-        newsLabel.configure(text=text, font=tkfont(size=size))
-
-    def setMax(self, max):
-        self.max = max
-
-
 progressBar = progressBar()
-
 
 versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
 
-launchFrame = tkframe(master=main, corner_radius=20)
-launchFrame.grid(row=2, column=1)
+bottomFrame = tkframe(master=main,corner_radius=20,bg_color='transparent',fg_color='transparent')
+bottomFrame.grid(row=2, column=1)
+
+launchFrame = tkframe(master=bottomFrame, corner_radius=20)
+launchFrame.grid(row=0, column=0,padx=10,pady=3)
 
 launchSelector = tkOptionMenu(master=launchFrame, corner_radius=15, values=versions)
 launchSelector.grid(column=0, row=0, pady=5, padx=5)
@@ -480,6 +489,22 @@ launchProgress = tkProgressbar(master=launchFrame, corner_radius=15, mode='deter
 launchProgress.set(0)
 launchProgress.grid(column=0, row=3, pady=5, padx=5)
 
+profileFrame = tkframe(master=bottomFrame, corner_radius=20)
+profileFrame.grid(row=0, column=1,padx=5,pady=3)
+
+img = tk.PhotoImage(file='data/head.png',format='png')
+    
+canvas = tkCanvas(master=profileFrame, height=100, width=100, highlightthickness=0,bg='#2b2b2b')
+canvas.create_image(0, 0, image=img, anchor='nw')
+canvas.grid(row=0,column=1,padx=10,pady=10)
+
+a = get_font_size('Logging in...',space=250)
+
+playerName = tklabel(master=profileFrame, text='Logging in...',font=tkfont(size=a))
+playerName.grid(column=0, row=0,padx=10,pady=10)
+
+
+
 # Vars
 ip = tki.Variable(master=launchFrame,name='ip',value='mc.hypixel.net')
 
@@ -491,5 +516,9 @@ openPage(currentPage)
 app.lift()
 app.attributes('-topmost', True)
 app.attributes('-topmost', False)
+
+print('[LAUNCHER] Starting mainloop...')
+
+Thread(target=mainloop,daemon=True).start()
 
 app.mainloop()
