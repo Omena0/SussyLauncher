@@ -1,69 +1,79 @@
-('C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+('C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
  'V1.7\\SussyLauncher V1.7.pkg',
- {'BINARY': True,
-  'DATA': True,
-  'EXECUTABLE': True,
-  'EXTENSION': True,
-  'PYMODULE': True,
-  'PYSOURCE': True,
-  'PYZ': False,
-  'SPLASH': True},
+ {'BINARY': 1,
+  'DATA': 1,
+  'EXECUTABLE': 1,
+  'EXTENSION': 1,
+  'PYMODULE': 1,
+  'PYSOURCE': 1,
+  'PYZ': 0,
+  'SPLASH': 1},
  [('PYZ-00.pyz',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
    'V1.7\\PYZ-00.pyz',
    'PYZ'),
   ('struct',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
    'V1.7\\localpycs\\struct.pyc',
    'PYMODULE'),
   ('pyimod01_archive',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
    'V1.7\\localpycs\\pyimod01_archive.pyc',
    'PYMODULE'),
   ('pyimod02_importers',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
    'V1.7\\localpycs\\pyimod02_importers.pyc',
    'PYMODULE'),
   ('pyimod03_ctypes',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
    'V1.7\\localpycs\\pyimod03_ctypes.pyc',
    'PYMODULE'),
   ('pyimod04_pywin32',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\build\\build\\SussyLauncher '
    'V1.7\\localpycs\\pyimod04_pywin32.pyc',
    'PYMODULE'),
   ('pyiboot01_bootstrap',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
    'PYSOURCE'),
   ('pyi_rth_inspect',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
-   'PYSOURCE'),
-  ('pyi_rth_setuptools',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
-   'PYSOURCE'),
-  ('pyi_rth_pkgutil',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
-   'PYSOURCE'),
-  ('pyi_rth_multiprocessing',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
    'PYSOURCE'),
   ('pyi_rth_pkgres',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgres.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgres.py',
    'PYSOURCE'),
   ('pyi_rth_win32comgenpy',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_win32comgenpy.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_win32comgenpy.py',
    'PYSOURCE'),
   ('pyi_rth_pywintypes',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\hooks\\rthooks\\pyi_rth_pywintypes.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\hooks\\rthooks\\pyi_rth_pywintypes.py',
    'PYSOURCE'),
   ('pyi_rth_pythoncom',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\hooks\\rthooks\\pyi_rth_pythoncom.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\hooks\\rthooks\\pyi_rth_pythoncom.py',
+   'PYSOURCE'),
+  ('pyi_rth_pkgutil',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
+   'PYSOURCE'),
+  ('pyi_rth_multiprocessing',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
+   'PYSOURCE'),
+  ('pyi_rth_setuptools',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_setuptools.py',
    'PYSOURCE'),
   ('pyi_rth__tkinter',
-   'C:\\Users\\aijo.aarne\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth__tkinter.py',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth__tkinter.py',
    'PYSOURCE'),
   ('SussyLauncher V1.7',
-   'C:\\Users\\aijo.aarne\\Documents\\GitHub\\SussyLauncher\\src\\SussyLauncher '
+   'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\SussyLauncher '
    'V1.7.pyw',
    'PYSOURCE')],
  True,

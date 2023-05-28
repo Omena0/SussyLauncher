@@ -1,4 +1,4 @@
-__version__ = "5.0.5"
+__version__ = "5.0.3"
 
 import os
 import sys
@@ -78,4 +78,4 @@ def set_window_scaling(scaling_value: float):
 
 def deactivate_automatic_dpi_awareness():
     """ deactivate DPI awareness of current process (windll.shcore.SetProcessDpiAwareness(0)) """
-    ScalingTracker.deactivate_automatic_dpi_awareness = True
+    ScalingTracker.deactivate_automatic_dpi_awareness = False

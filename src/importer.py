@@ -28,9 +28,10 @@ from threading import Thread
 a()
 import socket
 a()
-import datetime as t
+import datetime as dt
+from datetime import datetime
 a()
-from time import sleep
+import time as t
 a()
 from tkinter import messagebox
 a()
