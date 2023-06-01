@@ -107,7 +107,7 @@ def load_config():
             textSizeMultiplier  =  float(config[9])
             fabric_saveData     =  int(config[13])
             leave_launcher_open =  int(config[17])
-            enable_whitelist           =  int(config[21])
+            enable_whitelist    =  int(config[21])
             whitelist_username  =  str(config[25])
             whitelist_password  =  str(config[29])
             whitelist_ip_addr   =  '127.0.0.1'
@@ -395,8 +395,7 @@ for i in installed_versions:
 pageCommands = []
 
 for page in pages:
-    exec(
-        f'def page_{page.replace(".","_").replace("-","_")}(): openPage("{page}")')
+    exec(f'def page_{page.replace(".","_").replace("-","_")}(): openPage("{page}")')
     exec(f'pageCommands.append(page_{page.replace(".","_").replace("-","_")})')
 
 
