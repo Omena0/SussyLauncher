@@ -58,22 +58,22 @@ fabric_saveData:
 leave_launcher_open:
 0
 
-# Whitelist you on Omena0MC's servers automatically when launching, BUT YOU NEED TO ASK OMENA TO GIVE U AN ACCOUNT!! [1 = True, 0 = False]
+# Whitelist on some servers? Not really a thing yet (WIP) [1 = True, 0 = False]
 whitelist:
-1
+0
 
-# Whitelist username (same as minecraft)
+# Whitelist username (same as minecraft) (WIP)
 username:
 Example_1234
 
-# Whitelist password (dont worry it is hashed immidiately)
+# Whitelist password (dont worry it is hashed immidiately) (WIP)
 password:
 Example_Password_1234
 
 
 ### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
 
-# Ip for whitelist server
+# Ip for whitelist server (WIP)
 whitelist_ip:
 127.0.0.1
 

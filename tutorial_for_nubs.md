@@ -6,7 +6,7 @@
 
 1. Go to [This website](https://python.org/downloads)
 2. Download latest version of python (3.11.3 atm)
-3. Install it
+3. Install it (dont think you need a tutorial for that)
 
 ### Then SussyLauncher
 
@@ -18,9 +18,11 @@
 6. A file explorer window should open (if not just open the extracted folder)
 7. Shift right click SussyLauncher-main then click "Open PowerShell window here"
 8. Type the following command in the powershell window:
-```batch
-python -m pip install -r dependencies.txt
-```
+
+    ```batch
+    python -m pip install -r dependencies.txt
+    ```
+
 9. Wait for it to finish, close powershell and return to file explorer
 10. Open the folder
 11. Open src
