@@ -44,10 +44,6 @@
    'C:\\Program '
    'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgres.py',
    'PYSOURCE'),
-  ('pyi_rth_multiprocessing',
-   'C:\\Program '
-   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
-   'PYSOURCE'),
   ('pyi_rth_win32comgenpy',
    'C:\\Program '
    'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_win32comgenpy.py',
@@ -63,6 +59,10 @@
   ('pyi_rth_pkgutil',
    'C:\\Program '
    'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_pkgutil.py',
+   'PYSOURCE'),
+  ('pyi_rth_multiprocessing',
+   'C:\\Program '
+   'Files\\Python311\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_multiprocessing.py',
    'PYSOURCE'),
   ('pyi_rth_setuptools',
    'C:\\Program '
