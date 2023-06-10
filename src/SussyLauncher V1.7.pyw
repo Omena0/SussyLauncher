@@ -137,18 +137,6 @@ def get_font_size(text,space=1500):
         size = size - 1
     return size
 
-def get_font_size(text):
-    size = 50
-    while round(size*len(text)) > 1500:
-        size = size - 1
-    return size
-
-def get_font_size(text):
-    size = 50
-    while round(size*len(text)) > 1500:
-        size = size - 1
-    return size
-
 
 def install():
     callback = {
@@ -328,7 +316,8 @@ def _login(auto=False):
 def login():
     if _login(auto=True) == 'Failed':
         loginApp = App()
-        loginApp.title('Log in to SussyLaucher')
+        titlebar = CustomTitleBar(loginApp)
+        titlebar.title('Log in to SussyLaucher')
 
         # Background
         main = tkframe(master=loginApp, width=1000, height=1000)
@@ -452,7 +441,8 @@ versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
 fprint('[LAUNCHER] Initializing Main GUI')
 
 app = App()
-app.title(f'SussyLauncher {version}')
+titlebar = CustomTitleBar(app)
+titlebar.title(f'SussyLauncher {version}')
 
 newsFontSize = get_font_size(defaultNewsText,space=2500)
 
