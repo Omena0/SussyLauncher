@@ -28,7 +28,7 @@ debug = True
 # Set this to true to not have to log in, good for UI testing.
 # DISCLAIMER: YOU CANT RUN MC WITHOUT SIGNING IN!!!
 # This isint a pirate launcher!!!
-logged_in = False
+logged_in = True
 
 ###########################################################
 
@@ -377,6 +377,7 @@ async def async_head_render():
     await p.skin.render_head(display_hair=True,vr=0,hr=0)
     
     p.skin.head.save('data/head.png', format='png')
+    fprint('[MINEPI] Head rendered')
     
 
 def head_render():
@@ -384,7 +385,7 @@ def head_render():
     asyncio.run(async_head_render())
 
 fprint('[LAUNCHER] Starting player head renderer..')
-Thread(target=head_render,daemon=True,name='Head renderer').start()
+if not debug: Thread(target=head_render,daemon=True,name='Head renderer').start()
 
 with open('data/currentPage.txt','r') as file:
     currentPage = file.read()
@@ -453,13 +454,13 @@ newsFontSize = get_font_size(defaultNewsText,space=2500)
 newsFont = tkfont(size=newsFontSize)
 
 main = tkframe(master=app,corner_radius=15, fg_color='transparent',bg_color='transparent')
-main.pack(padx=5, pady=5,ipadx=15,ipady=5)
+main.pack(padx=5, pady=5,ipadx=5,ipady=5)
 
 title = tklabel(master=main, font=tkfont(size=40),text=f'SussyLauncher {version}', width=50, height=10)
 title.grid(row=0, column=1, padx=25, pady=0, sticky='n')
 
 sideFrame = tkframe(master=main, width=100, height=100, corner_radius=15)
-sideFrame.grid(row=0, column=0, pady=10, padx=5, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
+sideFrame.grid(row=0, column=0, pady=10, padx=20, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
 
 
 for i in enumerate(pages):
@@ -522,12 +523,12 @@ ipEntry.grid(column=0, row=0)
 
 openPage(currentPage)
 
-app.lift()
-app.attributes('-topmost', True)
-app.attributes('-topmost', False)
-
 fprint('[LAUNCHER] Starting mainloop...')
 
 Thread(target=mainloop,daemon=True,name='Mainloop').start()
+
+app.lift()
+app.attributes('-topmost', True)
+app.attributes('-topmost', False)
 
 app.mainloop()
