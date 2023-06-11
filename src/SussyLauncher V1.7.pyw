@@ -24,6 +24,7 @@ logged_in = False
 
 ###########################################################
 
+
 optionsText = """#OPTIONS.py:
 # YOU CAN EDIT VALUES HERE!
 
@@ -249,7 +250,7 @@ def openPage(page):
     
     if page == 'Install': #>OpenPage
         launchButton.configure(text='Install')
-        newsLabel.configure(text=defaultNewsText,height=225,font=newsFont)
+        newsLabel.configure(text=defaultNewsText,height=225+25)
         launchSelector.grid_configure(row=0, column=0)
         launchSelector.configure(values=versions)
         ipEntry.place_configure(x=999, y=999)
@@ -267,7 +268,7 @@ def openPage(page):
     else:
         launchButton.configure(text='Launch')
         text = f'Ready to launch.\nClick "launch" to launch {page}!'
-        newsLabel.configure(text=text, font=tkfont(size=get_font_size(text)),height=262)
+        newsLabel.configure(text=text, font=tkfont(size=get_font_size(text)),height=262+25)
         launchSelector.place_configure(x=999, y=999)
         launchSelector.configure(values=versions)
         ipEntry.place_configure(x=999, y=999)
@@ -393,7 +394,7 @@ fprint('[LAUNCHER] Initializing classes')
 class App(tki.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry(f"{600}x{500}")
+        self.geometry(f"{600}x{500+25}") # 25 for titebar height
         if not debug:
             self.resizable(False, False)
             
@@ -446,7 +447,6 @@ titlebar = CustomTitleBar(app)
 titlebar.title(f'SussyLauncher {version}')
 
 newsFontSize = get_font_size(defaultNewsText,space=2500)
-
 
 newsFont = tkfont(size=newsFontSize)
 
