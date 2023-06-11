@@ -1,21 +1,36 @@
-from importer import *
+import sys
+import subprocess
+import webbrowser as w
+import minecraft_launcher_lib as mcl
+import tkinter as tk
+import customtkinter as tki
+import json
+import os
+from threading import Thread
+import socket
+from tkinter import messagebox
+showInfo = messagebox.showinfo
+from lib.titlebar import CustomTitleBar
 
 version = 'V1.7'
 
-def fprint(*args):
-    date = datetime.utcnow() - datetime(1970, 1, 1)
-    ms = round(date.total_seconds()*1000)%1000
-    time = f'{t.strftime(f"%H:%M:%S:{ms}"):<12}'
-    print(f'{time} {"".join(args)}')
+print(f'SussyLauncher {version} build 18 - Titlebar test snapshot')
 
-fprint(f'SussyLauncher {version} build 21')
+tkfont = tki.CTkFont
+tkframe = tki.CTkFrame
+tkbutton = tki.CTkButton
+tklabel = tki.CTkLabel
+tkscrollbar = tki.CTkScrollbar
+tkProgressbar = tki.CTkProgressBar
+tkOptionMenu = tki.CTkOptionMenu
+tkCanvas = tki.CTkCanvas
 
 s = socket.socket()
 
 ### SET ALL THE VALUES BELLOW TO FALSE BEFORE BUILDING! ###
 
 # Allows the window to be resized. might add more to this value.
-debug = True
+debug = False
 
 # Set this to true to not have to log in, good for UI testing.
 # DISCLAIMER: YOU CANT RUN MC WITHOUT SIGNING IN!!!
@@ -66,52 +81,40 @@ whitelist_ip:
 
 """
 
-def load_config():
-    fprint('[CONFIG] Loading config...')
-    global blur_background,\
-        textSizeMultiplier,\
-        fabric_saveData,\
-        leave_launcher_open,\
-        enable_whitelist,\
-        whitelist_username,\
-        whitelist_password,\
-        whitelist_ip_addr,\
-        whitelist_port
-    try:
-        with open('data/options.txt') as config:
-            config = config.read().split('\n')
 
-            blur_background     =  int(config[5])
-            textSizeMultiplier  =  float(config[9])
-            fabric_saveData     =  int(config[13])
-            leave_launcher_open =  int(config[17])
-            enable_whitelist           =  int(config[21])
-            whitelist_username  =  str(config[25])
-            whitelist_password  =  str(config[29])
-            whitelist_ip_addr   =  '127.0.0.1'
-            whitelist_port      =  5000
-
-
-    except (FileNotFoundError,IndexError):
-        with open('data/options.txt', 'w') as file:
-            file.write(optionsText) # Create and add default settings
-
-            # Set default values
-            blur_background     = 1
-            textSizeMultiplier  = 1.5
-            fabric_saveData     = 1
-            leave_launcher_open = 0
-            enable_whitelist           = 0
-            whitelist_username  = ''
-            whitelist_password  = ''
-            whitelist_ip_addr   = '127.0.0.1'
-            whitelist_port      = 5000
-
-fprint('[LAUNCHER] LOADING CONFIG') 
-load_config()
+try:
+    with open('data/options.txt') as config:
+        config = config.read().split('\n')
+        
+        blur_background     =  int(config[5])
+        textSizeMultiplier  =  float(config[9])
+        fabric_saveData     =  int(config[13])
+        leave_launcher_open =  int(config[17])
+        whitelist           =  int(config[21])
+        whitelist_username  =  str(config[25])
+        whitelist_password  =  str(config[29])
+        whitelist_ip_addr   =  '127.0.0.1'
+        whitelist_port      =  5000
+        
+        
+except (FileNotFoundError,IndexError):
+    with open('data/options.txt', 'w') as file:
+        file.write(optionsText) # Create and add default settings
+        
+        # Set default values
+        blur_background     = 1
+        textSizeMultiplier  = 1.5
+        fabric_saveData     = 1
+        leave_launcher_open = 0
+        whitelist           = 0
+        whitelist_username  = ''
+        whitelist_password  = ''
+        whitelist_ip_addr   = '127.0.0.1'
+        whitelist_port      = 5000
         
 
-defaultNewsText = 'Build 21 - UI V2:\nAdded Profile Next to launch button, fixed ui                     '
+
+defaultNewsText = 'Build 18 Titlebar test snapshot. \n\nPlease let me know if you want this in the launcher!               '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
@@ -121,7 +124,7 @@ installed_versions = mcl.utils.get_installed_versions('files/')
 installed_version_ids = []
 all_versions = mcl.utils.get_available_versions('files/')
 for i in installed_versions:
-    fprint(f'[LAUNCHER] Version found: {i["id"]}')
+    print(f'Version found: {i["id"]}')
     installed_version_ids.append(i['id'])
 
 CLIENT_ID = '347cf8bd-c8d1-4967-8104-ee7493cfbf2f'
@@ -129,11 +132,18 @@ REDIRECT_URL = 'http://localhost/returnUrl'
 SECRET = 'E2V8Q~Y-QIJBxfo4td2E5fTShej0XSeAPZgzGbMA'
 
 # Functions
+<<<<<<< HEAD
 fprint('[LAUNCHER] Initializing functions')
 
 def get_font_size(text,space=1500):
     size = 50
     while round(size*len(text)) > space:
+=======
+
+def get_font_size(text):
+    size = 50
+    while round(size*len(text)) > 1500:
+>>>>>>> parent of 7c6123f (Merge branch 'UI-V2' of https://github.com/Omena0/SussyLauncher into CustomTitlebar-Snapshot)
         size = size - 1
     return size
 
@@ -147,41 +157,41 @@ def install():
     launchProgress.start()
     mcl.install.install_minecraft_version(launchSelector.get(
     ), minecraft_directory=minecraft_directory, callback=callback)
-    fprint('Install complete!')
+    print('Install complete!')
     showInfo('Done!', 'Install complete!\nPlease restart the launcher!!!')
     newsLabel.configure(text=defaultNewsText)
     launchProgress.stop()
 
 
 def whitelist():
-    fprint('Attempting to whitelist...')
+    print('Attempting to whitelist...')
     try: s.connect((whitelist_ip_addr,whitelist_port))
-    except: fprint('Could not connect! Is the server online???')
+    except: print('Could not connect! Is the server online???')
     
     s.send(f'GET TOKEN|{whitelist_username}|{whitelist_password}'.encode())
     token = s.recv(2048).decode()
-    fprint(token)
+    print(token)
     if token.startswith('TOKEN'):
         s.send(f'REQUEST WHITELIST|{token}'.encode())
         a = s.recv(2048).decode()
-        fprint(a)
+        print(a)
     else:
         #showInfo('Invalid Credentials','Invalid Whitelist Credentials..')
-        fprint('Invalid credentials')
+        print('Invalid credentials')
     
     
 
 def launch():
     global currentPage
     if not logged_in:
-        showInfo('Not logged in!','Try again later.\n(About a second)')
+        showInfo('You arent logged in!','Log in with a microsoft account to continue.')
         return
     if currentPage == 'Install':
         if launchSelector.get() in installed_versions:
             showInfo('Version already installed!',f'The version {launchSelector.get()} is a lready installed in "files/versions"! Install cancelled!')
-        fprint(f'[LAUNCHER] Installing {launchSelector.get()}!')
+        print(f'[LAUNCHER] Installing {launchSelector.get()}!')
         Thread(target=install, daemon=True, name='Installer').start()
-        fprint(f'[LAUNCHER] Installed {launchSelector.get()}! RESTART')
+        print(f'[LAUNCHER] Installed {launchSelector.get()}! RESTART')
         return
     
     if currentPage == 'Join':
@@ -189,20 +199,20 @@ def launch():
     else:
         join = False
     
-    fprint(f'[LAUNCHER] Launching {currentPage}')
+    print(f'[LAUNCHER] Launching {currentPage}')
 
     if pages == ['Install','Join']:
-        showInfo('Minecraft missing!', 'You need to install a version first!\nHow did you get this error? Create an issue on github or contact Omena0#3610 on discord')
+        showInfo('Minecraft missing!', 'You need to install a version first!')
         return
 
     global login_data
     # Get Minecraft command
     
     if 'fabric' in currentPage and fabric_saveData:
-        fprint('fabric version detected!!!')
+        print('fabric version detected!!!')
         gameDirectory = f'files/versions/{currentPage}/saveData'
     else:
-        fprint('Non-fabric version detected!!!')
+        print('Non-fabric version detected!!!')
         gameDirectory = gamedir
     
     port = '25565'
@@ -226,8 +236,7 @@ def launch():
     minecraft_command = mcl.command.get_minecraft_command(currentPage, minecraft_directory, options)
 
     # Get whitelisted :)
-    if enable_whitelist:
-        Thread(target=whitelist,daemon=True, name='Whitelisting client').start()
+    Thread(target=whitelist,daemon=True).start()
     
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
@@ -240,14 +249,14 @@ def _launch_mc():
 
 
 def openPage(page):
-    fprint(page)
+    print(page)
     global currentPage
     currentPage = page
     
     with open('data/currentPage.txt', 'w') as file:
         file.write(page)
     
-    if page == 'Install': #>OpenPage
+    if page == 'Install':
         launchButton.configure(text='Install')
         newsLabel.configure(text=defaultNewsText,height=225,font=newsFont)
         launchSelector.grid_configure(row=0, column=0)
@@ -258,8 +267,6 @@ def openPage(page):
         launchButton.configure(text='Join')
         text = 'Automatically join server with mc version:'
         newsLabel.configure(text=text,height=185,font=tkfont(size=get_font_size(text)))
-        text = 'Automatically join server with mc version:'
-        newsLabel.configure(text=text,height=210,font=tkfont(size=get_font_size(text,space=1500)))
         launchSelector.grid_configure(row=1, column=0)
         launchSelector.configure(values=installed_version_ids)
         ipEntry.grid_configure(row=0,column=0)
@@ -273,22 +280,22 @@ def openPage(page):
         ipEntry.place_configure(x=999, y=999)
 
 
-
-def _login(auto=False):
-    global login_data, logged_in, username, skins
+def login(enable_manual=True):
+    global login_data, logged_in
     if logged_in:
+        loginApp.destroy()
         return
     # Try login from stored login info
-    fprint('[LAUNCHER] Logging in...')
+    print('[LAUNCHER] Logging in...')
     # Try to refresh login from stored credentials
     try:
         with open('data/credentials.txt', 'r') as file:
             content = file.read()
         old_login_data = json.loads(content)
-        fprint('[LAUNCHER] Refreshing credentials...')
+        print('[LAUNCHER] Refreshing credentials...')
         login_data = mcl.microsoft_account.complete_refresh(
             client_id=CLIENT_ID, client_secret=SECRET, redirect_uri=REDIRECT_URL, refresh_token=old_login_data["refresh_token"])
-        fprint('[LAUNCHER] Logged in! Storing login data...')
+        print('[LAUNCHER] Logged in! Storing login data...')
         with open('data/credentials.txt', 'w') as file:
             file.write(json.dumps(login_data))
         logged_in = True
@@ -296,10 +303,12 @@ def _login(auto=False):
 
     # Otherwise ask the user to log in manually and store login info
     except Exception as e:
-        if auto: return 'Failed'
-        fprint(e)
-        login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(CLIENT_ID, REDIRECT_URL)
-        w.open(login_url, 2, True)
+        if not enable_manual:
+            return
+        print(e)
+        login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(
+            CLIENT_ID, REDIRECT_URL)
+        w.open(login_url, 1, True)
         code_url = tki.CTkInputDialog(title='Enter URL', text='Enter the URL where you were redirected to after signing in.').get_input()
         auth_code = mcl.microsoft_account.get_auth_code_from_url(code_url)
         # Get the login data
@@ -312,7 +321,9 @@ def _login(auto=False):
             file.write(json.dumps(login_data))
 
         logged_in = True
+        showInfo('Logged in!', f'Logged in as {login_data["name"]}')
 
+<<<<<<< HEAD
 def login():
     if _login(auto=True) == 'Failed':
         loginApp = App()
@@ -360,27 +371,16 @@ def mainloop():
 # >THREADED LOGIN
 
 Thread(target=login,daemon=True, name='Microsoft Login').start()
+=======
+    file.close()
+    loginApp.destroy()
+>>>>>>> parent of 7c6123f (Merge branch 'UI-V2' of https://github.com/Omena0/SussyLauncher into CustomTitlebar-Snapshot)
 
 # PREP FOR GUI
 
+
 latest_version = mcl.utils.get_latest_version()["release"]
 
-async def async_head_render():
-    while not logged_in: pass
-    p = minepi.Player(uuid=login_data['id'])
-    await p.initialize()
-
-    await p.skin.render_head(display_hair=True,vr=0,hr=0)
-    
-    p.skin.head.save('data/head.png', format='png')
-    
-
-def head_render():
-    fprint('[MINEPI] Rendering player head..')
-    asyncio.run(async_head_render())
-
-fprint('[LAUNCHER] Starting player head renderer..')
-Thread(target=head_render,daemon=True,name='Head renderer').start()
 
 with open('data/currentPage.txt','r') as file:
     currentPage = file.read()
@@ -388,37 +388,57 @@ with open('data/currentPage.txt','r') as file:
 tki.set_appearance_mode('dark')
 tki.set_default_color_theme('blue')
 
-fprint('[LAUNCHER] Initializing classes')
+# LOGIN SCREEN
+
+# Try login without opening browser in case the auto login fails.
+try:
+    login(enable_manual=False)
+except: pass
+
 class App(tki.CTk):
     def __init__(self):
         super().__init__()
         self.geometry(f"{600}x{500}")
         if not debug:
             self.resizable(False, False)
-            
-class progressBar:
-    def __init__(self):
-        self.status = 'None'
-        self.progress = 0
-        self.max = 1
 
-    def setStatus(self, status):
-        self.status = status
+if not logged_in:
+    
 
-    def setProgress(self, progress):
-        self.progress = progress
-        fprint(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
-        launchProgress.set(progress/self.max)
-        text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
-        size = 100
-        while round(size*len(text)/1.3) > 2050:
-            size = size - 2
-        newsLabel.configure(text=text, font=tkfont(size=size))
 
-    def setMax(self, max):
-        self.max = max
+    loginApp = App()
+    titlebar = CustomTitleBar(loginApp)
+    titlebar.title('Log in to SussyLaucher')
 
-fprint('[LAUNCHER] Preparing to Initialize Main GUI')
+    # Background
+    main = tkframe(master=loginApp, width=1000, height=1000)
+    main.pack()
+
+    canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
+    canvas.pack(expand=True, fill='both')
+
+    if blur_background == 1:
+        bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
+    else:
+        bgImage = tk.PhotoImage(file='assets/bg.png')
+    bgImage = bgImage.zoom(4, 6)
+    bgImage = bgImage.subsample(10)
+
+    canvas.create_image(0, 0, image=bgImage, anchor='nw')
+    canvas.create_text(375, 150, text='Log in to SussyLauncher:',
+                       font=tkfont(size=60), fill='white', anchor='center')
+
+    login = tkbutton(master=main, text='Log in', font=tkfont(
+        size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=login)
+    login.place(x=270, y=375)
+
+    loginApp.wm_attributes('-transparentcolor', 'grey')
+
+    loginApp.mainloop()
+
+# CHECK LOGIN STATUS
+if not logged_in:
+    sys.exit()
 
 # INIT MAIN GUI
 pages = ['Install','Join']
@@ -430,33 +450,36 @@ for i in installed_versions:
 pageCommands = []
 
 for page in pages:
-    exec(f'def page_{page.replace(".","_").replace("-","_")}(): openPage("{page}")')
+    exec(
+        f'def page_{page.replace(".","_").replace("-","_")}(): openPage("{page}")')
     exec(f'pageCommands.append(page_{page.replace(".","_").replace("-","_")})')
 
 
-progressBar = progressBar()
-
-versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
-
-fprint('[LAUNCHER] Initializing Main GUI')
-
 app = App()
+<<<<<<< HEAD
 titlebar = CustomTitleBar(app)
 titlebar.title(f'SussyLauncher {version}')
+=======
+titlebar = CustomTitleBar(app,resizable=False)
+titlebar.title(f'SussyLauncher {version} - Titlebar test snapshot')
+>>>>>>> parent of 7c6123f (Merge branch 'UI-V2' of https://github.com/Omena0/SussyLauncher into CustomTitlebar-Snapshot)
 
-newsFontSize = get_font_size(defaultNewsText,space=2500)
+newsFontSize = 50
+while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
+    newsFontSize = newsFontSize - 2
 
 
 newsFont = tkfont(size=newsFontSize)
 
-main = tkframe(master=app,corner_radius=15, fg_color='transparent',bg_color='transparent')
-main.pack(padx=5, pady=5,ipadx=15,ipady=5)
+
+main = tkframe(master=app, width=1000, height=1000,corner_radius=15, fg_color='transparent')
+main.pack(padx=10, pady=10)
 
 title = tklabel(master=main, font=tkfont(size=40),text=f'SussyLauncher {version}', width=50, height=10)
 title.grid(row=0, column=1, padx=25, pady=0, sticky='n')
 
-sideFrame = tkframe(master=main, width=100, height=100, corner_radius=15)
-sideFrame.grid(row=0, column=0, pady=10, padx=5, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
+sideFrame = tkframe(master=main, width=100, height=200, corner_radius=15)
+sideFrame.grid(row=0, column=0, pady=25, padx=5, ipady=10, ipadx=10, rowspan=100, sticky='NSEW')
 
 
 for i in enumerate(pages):
@@ -464,11 +487,9 @@ for i in enumerate(pages):
     i = i[1]
     if 'fabric' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
-    a = 25
-    while round(a*len(i)) > 250:
-        a = a - 1
-    fprint(f'[LAUNCHER] Initializing page: {i} [{a}]')
-    button = tkbutton(master=sideFrame, width=60, height=20, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
+    print(f'Initializing page: {i}')
+    a = 25-round((len(i)+1)/2)
+    button = tkbutton(master=sideFrame, width=40, height=30, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
     button.pack(padx=3, pady=10)
 
 contentFrame = tkframe(master=main, width=350, height=250, corner_radius=25)
@@ -477,39 +498,48 @@ contentFrame.grid(row=1, column=1, stick='n', pady=10, padx=10)
 newsLabel = tklabel(master=contentFrame, width=350, height=200, text=defaultNewsText, font=newsFont, anchor='n', wraplength=340)
 newsLabel.pack(padx=20, pady=10)
 
-bottomFrame = tkframe(master=main,corner_radius=20,bg_color='transparent',fg_color='transparent')
-bottomFrame.grid(row=3, column=1)
 
-launchFrame = tkframe(master=bottomFrame, corner_radius=20)
-launchFrame.grid(row=0, column=0,padx=5,pady=3)
+class progressBar:
+    def __init__(self):
+        self.status = 'None'
+        self.progress = 0
+        self.max = 1
+
+    def setStatus(self, status):
+        self.status = status
+
+    def setProgress(self, progress):
+        self.progress = progress
+        print(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
+        launchProgress.set(progress/self.max)
+        text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
+        size = 100
+        while round(size*len(text)/1.3) > 2050:
+            size = size - 2
+        newsLabel.configure(text=text, font=tkfont(size=size))
+
+    def setMax(self, max):
+        self.max = max
+
+
+progressBar = progressBar()
+
+
+versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
+
+launchFrame = tkframe(master=main, corner_radius=20)
+launchFrame.grid(row=2, column=1)
 
 launchSelector = tkOptionMenu(master=launchFrame, corner_radius=15, values=versions)
 launchSelector.grid(column=0, row=0, pady=5, padx=5)
 
 
-launchButton = tkbutton(master=launchFrame, width=150, height=75,corner_radius=15, text='Install', font=tkfont(size=20), command=launch)
-launchButton.grid(column=0, row=2, pady=5, padx=10)
+launchButton = tkbutton(master=launchFrame, width=200, height=75,corner_radius=15, text='Install', font=tkfont(size=20), command=launch)
+launchButton.grid(column=0, row=2, pady=5, padx=5)
 
-launchProgress = tkProgressbar(master=launchFrame, width=150,corner_radius=15, mode='determinate', determinate_speed=0.001)
+launchProgress = tkProgressbar(master=launchFrame, corner_radius=15, mode='determinate', determinate_speed=0.001)
 launchProgress.set(0)
 launchProgress.grid(column=0, row=3, pady=5, padx=5)
-
-
-profileFrame = tkframe(master=bottomFrame, corner_radius=20)
-profileFrame.grid(row=0, column=1,padx=5)
-
-img = tk.PhotoImage(file='data/head.png',format='png')
-    
-canvas = tkCanvas(master=profileFrame, height=100, width=100, highlightthickness=0,bg='#2b2b2b')
-canvas.create_image(0, 0, image=img, anchor='nw')
-canvas.pack(side='right',padx=10,pady=15)
-
-a = get_font_size('Logging in...',space=200)
-
-playerName = tklabel(master=profileFrame, text='Logging in...',font=tkfont(size=a))
-playerName.pack(side='right',padx=10,pady=10,expand=True,fill='both')
-
-fprint('[LAUNCHER] Preparing for mainloop')
 
 # Vars
 ip = tki.Variable(master=launchFrame,name='ip',value='mc.hypixel.net')
@@ -521,10 +551,5 @@ openPage(currentPage)
 
 app.lift()
 app.attributes('-topmost', True)
-app.attributes('-topmost', False)
-
-fprint('[LAUNCHER] Starting mainloop...')
-
-Thread(target=mainloop,daemon=True,name='Mainloop').start()
 
 app.mainloop()
