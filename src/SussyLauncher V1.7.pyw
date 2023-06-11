@@ -23,12 +23,12 @@ s = socket.socket()
 ### SET ALL THE VALUES BELLOW TO FALSE BEFORE BUILDING! ###
 
 # Allows the window to be resized. might add more to this value.
-debug = True
+debug = False
 
 # Set this to true to not have to log in, good for UI testing.
 # DISCLAIMER: YOU CANT RUN MC WITHOUT SIGNING IN!!!
 # This isint a pirate launcher!!!
-logged_in = True
+logged_in = False
 
 ###########################################################
 
@@ -502,11 +502,14 @@ launchProgress.grid(column=0, row=3, pady=5, padx=5)
 profileFrame = tkframe(master=bottomFrame, corner_radius=20)
 profileFrame.grid(row=0, column=1,padx=5)
 
-img = tk.PhotoImage(file='data/head.png',format='png')
+try:
+    img = tk.PhotoImage(file='data/head.png',format='png')
     
-canvas = tkCanvas(master=profileFrame, height=100, width=100, highlightthickness=0,bg='#2b2b2b')
-canvas.create_image(0, 0, image=img, anchor='nw')
-canvas.pack(side='right',padx=10,pady=15)
+    canvas = tkCanvas(master=profileFrame, height=100, width=100, highlightthickness=0,bg='#2b2b2b')
+    canvas.create_image(0, 0, image=img, anchor='nw')
+    canvas.pack(side='right',padx=10,pady=15)
+
+except: pass
 
 a = get_font_size('Logging in...',space=200)
 
