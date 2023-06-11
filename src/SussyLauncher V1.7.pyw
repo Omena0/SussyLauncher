@@ -1,20 +1,12 @@
-# SussyLauncher By Omena0MC
-# https://github.com/Omena0/SussyLauncher
-
 from importer import *
+
+version = 'V1.7'
 
 def fprint(*args):
     date = datetime.utcnow() - datetime(1970, 1, 1)
     ms = round(date.total_seconds()*1000)%1000
     time = f'{t.strftime(f"%H:%M:%S:{ms}"):<12}'
     print(f'{time} {"".join(args)}')
-
-# Rick roll on april first :)
-if (dt.date.day, dt.date.month) == (4,1):
-    fprint('April 1st (get rickrolled lmao)')
-    w.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ',2,True)
-
-version = 'V1.7'
 
 fprint(f'SussyLauncher {version} build 21')
 
@@ -51,22 +43,22 @@ fabric_saveData:
 leave_launcher_open:
 0
 
-# Whitelist you on some servers that support this project (i might post it to github) [1 = True, 0 = False]
-enable_whitelist:
-1
+# Whitelist on some servers? Not really a thing yet (WIP) [1 = True, 0 = False]
+whitelist:
+0
 
-# Whitelist username (same as minecraft)
+# Whitelist username (same as minecraft) (WIP)
 username:
 Example_1234
 
-# Whitelist password (dont worry it is hashed immidiately)
+# Whitelist password (dont worry it is hashed immidiately) (WIP)
 password:
 Example_Password_1234
 
 
 ### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
 
-# Ip for whitelist server
+# Ip for whitelist server (WIP)
 whitelist_ip:
 127.0.0.1
 
@@ -117,6 +109,7 @@ def load_config():
 
 fprint('[LAUNCHER] LOADING CONFIG') 
 load_config()
+        
 
 defaultNewsText = 'Build 21 - UI V2:\nAdded Profile Next to launch button, fixed ui                     '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
@@ -256,13 +249,15 @@ def openPage(page):
     
     if page == 'Install': #>OpenPage
         launchButton.configure(text='Install')
-        newsLabel.configure(text=defaultNewsText,height=250,font=newsFont)
+        newsLabel.configure(text=defaultNewsText,height=225,font=newsFont)
         launchSelector.grid_configure(row=0, column=0)
         launchSelector.configure(values=versions)
         ipEntry.place_configure(x=999, y=999)
         
     elif page == 'Join':
         launchButton.configure(text='Join')
+        text = 'Automatically join server with mc version:'
+        newsLabel.configure(text=text,height=185,font=tkfont(size=get_font_size(text)))
         text = 'Automatically join server with mc version:'
         newsLabel.configure(text=text,height=210,font=tkfont(size=get_font_size(text,space=1500)))
         launchSelector.grid_configure(row=1, column=0)
@@ -272,7 +267,7 @@ def openPage(page):
     else:
         launchButton.configure(text='Launch')
         text = f'Ready to launch.\nClick "launch" to launch {page}!'
-        newsLabel.configure(text=text, font=tkfont(size=get_font_size(text,space=2000)),height=288)
+        newsLabel.configure(text=text, font=tkfont(size=get_font_size(text)),height=262)
         launchSelector.place_configure(x=999, y=999)
         launchSelector.configure(values=versions)
         ipEntry.place_configure(x=999, y=999)
@@ -321,7 +316,8 @@ def _login(auto=False):
 def login():
     if _login(auto=True) == 'Failed':
         loginApp = App()
-        loginApp.title('Log in to SussyLaucher')
+        titlebar = CustomTitleBar(loginApp)
+        titlebar.title('Log in to SussyLaucher')
 
         # Background
         main = tkframe(master=loginApp, width=1000, height=1000)
@@ -446,7 +442,8 @@ versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
 fprint('[LAUNCHER] Initializing Main GUI')
 
 app = App()
-app.title(f'SussyLauncher {version}')
+titlebar = CustomTitleBar(app)
+titlebar.title(f'SussyLauncher {version}')
 
 newsFontSize = get_font_size(defaultNewsText,space=2500)
 

@@ -1,4 +1,4 @@
-max = 13
+max = 14
 
 print(f'[IMPORTER] Initializing modules... ')
 
@@ -33,9 +33,13 @@ from datetime import datetime
 a()
 import time as t
 a()
+from lib import titlebar
+CustomTitleBar = titlebar.CustomTitleBar
+a()
 from tkinter import messagebox
 a()
 showInfo = messagebox.showinfo
+
 
 tkfont = tki.CTkFont
 tkframe = tki.CTkFrame
