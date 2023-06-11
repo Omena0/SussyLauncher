@@ -50,5 +50,3 @@ tkProgressbar = tki.CTkProgressBar
 tkOptionMenu = tki.CTkOptionMenu
 tkCanvas = tki.CTkCanvas
 tkImage = tki.CTkImage
-
-print()

@@ -132,18 +132,10 @@ REDIRECT_URL = 'http://localhost/returnUrl'
 SECRET = 'E2V8Q~Y-QIJBxfo4td2E5fTShej0XSeAPZgzGbMA'
 
 # Functions
-<<<<<<< HEAD
-fprint('[LAUNCHER] Initializing functions')
-
-def get_font_size(text,space=1500):
-    size = 50
-    while round(size*len(text)) > space:
-=======
 
 def get_font_size(text):
     size = 50
     while round(size*len(text)) > 1500:
->>>>>>> parent of 7c6123f (Merge branch 'UI-V2' of https://github.com/Omena0/SussyLauncher into CustomTitlebar-Snapshot)
         size = size - 1
     return size
 
@@ -323,58 +315,8 @@ def login(enable_manual=True):
         logged_in = True
         showInfo('Logged in!', f'Logged in as {login_data["name"]}')
 
-<<<<<<< HEAD
-def login():
-    if _login(auto=True) == 'Failed':
-        loginApp = App()
-        titlebar = CustomTitleBar(loginApp)
-        titlebar.title('Log in to SussyLaucher')
-
-        # Background
-        main = tkframe(master=loginApp, width=1000, height=1000)
-        main.pack()
-
-        canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
-        canvas.pack(expand=True, fill='both')
-
-        t.sleep(0.1)
-        if blur_background == 1:
-            bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
-        else:
-            bgImage = tk.PhotoImage(file='assets/bg.png')
-        bgImage = bgImage.zoom(4, 6)
-        bgImage = bgImage.subsample(10)
-
-        canvas.create_image(0, 0, image=bgImage, anchor='nw')
-        canvas.create_text(375, 150, text='Log in to SussyLauncher:',font=tkfont(size=60), fill='white', anchor='center')
-
-        login = tkbutton(master=main, text='Log in', font=tkfont(
-            size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=_login)
-        login.place(x=270, y=375)
-
-        loginApp.wm_attributes('-transparentcolor', 'grey')
-
-        loginApp.mainloop()
-
-
-def mainloop():
-    global login_data, logged_in
-    while True:
-        if logged_in:
-            try:
-                name = login_data["name"]
-                a = get_font_size(name,space=170)
-                playerName.configure(text=f'Logged in as:\n{name}',font=tkfont(size=a))
-            except: pass
-        t.sleep(0.5)
-
-# >THREADED LOGIN
-
-Thread(target=login,daemon=True, name='Microsoft Login').start()
-=======
     file.close()
     loginApp.destroy()
->>>>>>> parent of 7c6123f (Merge branch 'UI-V2' of https://github.com/Omena0/SussyLauncher into CustomTitlebar-Snapshot)
 
 # PREP FOR GUI
 
@@ -456,13 +398,8 @@ for page in pages:
 
 
 app = App()
-<<<<<<< HEAD
-titlebar = CustomTitleBar(app)
-titlebar.title(f'SussyLauncher {version}')
-=======
 titlebar = CustomTitleBar(app,resizable=False)
 titlebar.title(f'SussyLauncher {version} - Titlebar test snapshot')
->>>>>>> parent of 7c6123f (Merge branch 'UI-V2' of https://github.com/Omena0/SussyLauncher into CustomTitlebar-Snapshot)
 
 newsFontSize = 50
 while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
