@@ -77,7 +77,8 @@ def load_config():
         whitelist_username,\
         whitelist_password,\
         whitelist_ip_addr,\
-        whitelist_port
+        whitelist_port,\
+        allocated_ram
     try:
         with open('data/options.txt') as config:
             config = config.read().split('\n')
@@ -91,6 +92,7 @@ def load_config():
             whitelist_password  =  str(config[29])
             whitelist_ip_addr   =  '127.0.0.1'
             whitelist_port      =  5000
+            allocated_ram       =  int(config[33])
 
 
     except (FileNotFoundError,IndexError):
@@ -102,17 +104,18 @@ def load_config():
             textSizeMultiplier  = 1.5
             custom_saveData     = 1
             leave_launcher_open = 0
-            enable_whitelist           = 0
+            enable_whitelist    = 0
             whitelist_username  = ''
             whitelist_password  = ''
             whitelist_ip_addr   = '127.0.0.1'
             whitelist_port      = 5000
+            allocated_ram       = 8
 
 fprint('[LAUNCHER] LOADING CONFIG') 
 load_config()
         
 
-defaultNewsText = 'Build 21 - UI V2:\nAdded Profile Next to launch button, fixed ui                     '
+defaultNewsText = 'Build 22 - UI V2:\nNow you can change allocated ram in config,\nQuilt support maybe?                     '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
@@ -212,10 +215,10 @@ def launch():
         "username": login_data["name"],
         "uuid": login_data["id"],
         "token": login_data["access_token"],
-        "jvmArguments": ['-Xmx4G', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseG1GC', '-XX:G1NewSizePercent=20', '-XX:G1ReservePercent=20', '-XX:MaxGCPauseMillis=50', '-XX:G1HeapRegionSize=32M'],
+        "jvmArguments": [f'-Xmx{allocated_ram}G', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseG1GC', '-XX:G1NewSizePercent=20', '-XX:G1ReservePercent=20', '-XX:MaxGCPauseMillis=50', '-XX:G1HeapRegionSize=32M'],
         "gameDirectory": gameDirectory,
-        "launcherName": "SussyLauncher", # The name of your launcher
-        "launcherVersion": version # The version of your launcher
+        "launcherName": "SussyLauncher",
+        "launcherVersion": version
     }
     
     if join:

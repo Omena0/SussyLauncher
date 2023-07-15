@@ -29,12 +29,14 @@ Omena0MC
 password:
 1234
 
+# Ammount of ram to allocate (GB)
+ram:
+8
 
 ### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
 
 # Ip for whitelist server
 whitelist_ip:
 127.0.0.1
-
 
 
