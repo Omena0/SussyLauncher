@@ -463,7 +463,7 @@ sideFrame.grid(row=0, column=0, pady=10, padx=20, ipady=10, ipadx=10, rowspan=4,
 for i in enumerate(pages):
     index = i[0]
     i = i[1]
-    if 'fabric' in i:
+    if 'fabric' in i or 'quilt' in i:
         i = i.split('-')[0] + '_' + i.split('-')[3]
     a = 25
     while round(a*len(i)) > 250:
