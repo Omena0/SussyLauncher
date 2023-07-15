@@ -460,7 +460,7 @@ title = tklabel(master=main, font=tkfont(size=40),text=f'SussyLauncher {version}
 title.grid(row=0, column=1, padx=25, pady=0, sticky='n')
 
 sideFrame = tkframe(master=main, width=100, height=100, corner_radius=15)
-sideFrame.grid(row=0, column=0, pady=10, padx=20, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
+sideFrame.grid(row=0, column=0, pady=10, padx=5, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
 
 
 for i in enumerate(pages):

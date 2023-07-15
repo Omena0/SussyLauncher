@@ -1675,6 +1675,15 @@
    'C:\\Program '
    'Files\\Python311\\Lib\\site-packages\\_distutils_hack\\override.py',
    'PYMODULE'),
+<<<<<<< Updated upstream
+=======
+  ('stringprep',
+   'C:\\Program Files\\Python311\\Lib\\stringprep.py',
+   'PYMODULE'),
+  ('tracemalloc',
+   'C:\\Program Files\\Python311\\Lib\\tracemalloc.py',
+   'PYMODULE'),
+>>>>>>> Stashed changes
   ('nturl2path',
    'C:\\Program Files\\Python311\\Lib\\nturl2path.py',
    'PYMODULE'),
@@ -1683,12 +1692,15 @@
   ('http.cookiejar',
    'C:\\Program Files\\Python311\\Lib\\http\\cookiejar.py',
    'PYMODULE'),
+<<<<<<< Updated upstream
   ('tracemalloc',
    'C:\\Program Files\\Python311\\Lib\\tracemalloc.py',
    'PYMODULE'),
   ('stringprep',
    'C:\\Program Files\\Python311\\Lib\\stringprep.py',
    'PYMODULE'),
+=======
+>>>>>>> Stashed changes
   ('_py_abc', 'C:\\Program Files\\Python311\\Lib\\_py_abc.py', 'PYMODULE'),
   ('importer',
    'C:\\Users\\aarne\\Documents\\GitHub\\SussyLauncher\\src\\importer.py',
