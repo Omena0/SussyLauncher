@@ -36,8 +36,8 @@ blur_background:
 font_size_multiplier:
 1.5
 
-# Use files/versions/<version>/saveData for minecraft data instead of files/saveData for FABRIC ONLY [1 = True, 0 = False]
-fabric_saveData:
+# Use files/versions/<version>/saveData for minecraft data instead of files/saveData [1 = True, 0 = False]
+custom_saveData:
 1
 
 # Name says it all [1 = True, 0 = False]
@@ -71,7 +71,7 @@ def load_config():
     fprint('[CONFIG] Loading config...')
     global blur_background,\
         textSizeMultiplier,\
-        fabric_saveData,\
+        custom_saveData,\
         leave_launcher_open,\
         enable_whitelist,\
         whitelist_username,\
@@ -84,7 +84,7 @@ def load_config():
 
             blur_background     =  int(config[5])
             textSizeMultiplier  =  float(config[9])
-            fabric_saveData     =  int(config[13])
+            custom_saveData     =  int(config[13])
             leave_launcher_open =  int(config[17])
             enable_whitelist           =  int(config[21])
             whitelist_username  =  str(config[25])
@@ -100,7 +100,7 @@ def load_config():
             # Set default values
             blur_background     = 1
             textSizeMultiplier  = 1.5
-            fabric_saveData     = 1
+            custom_saveData     = 1
             leave_launcher_open = 0
             enable_whitelist           = 0
             whitelist_username  = ''
@@ -199,11 +199,11 @@ def launch():
     global login_data
     # Get Minecraft command
     
-    if 'fabric' in currentPage and fabric_saveData:
-        fprint('fabric version detected!!!')
+    if custom_saveData:
         gameDirectory = f'files/versions/{currentPage}/saveData'
+        fprint('Custom saveData enabled.')
     else:
-        fprint('Non-fabric version detected!!!')
+        fprint('Custom saveData disabled.')
         gameDirectory = gamedir
     
     port = '25565'
