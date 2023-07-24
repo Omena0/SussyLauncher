@@ -146,7 +146,7 @@ for i in installed_versions:
 
 CLIENT_ID = '347cf8bd-c8d1-4967-8104-ee7493cfbf2f'
 REDIRECT_URL = 'http://localhost/returnUrl'
-SECRET = 'E2V8Q~Y-QIJBxfo4td2E5fTShej0XSeAPZgzGbMA'
+SECRET = 'pp18Q~9n25zSSOTX7iCaM.0zGHAVP_efrtSxQaHo'
 
 # Functions
 
