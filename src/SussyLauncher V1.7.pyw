@@ -150,9 +150,9 @@ SECRET = 'pp18Q~9n25zSSOTX7iCaM.0zGHAVP_efrtSxQaHo'
 
 # Functions
 
-def get_font_size(text):
+def get_font_size(text,space=1500):
     size = 50
-    while round(size*len(text)) > 1500:
+    while round(size*len(text)) > space:
         size = size - 1
     return size
 
