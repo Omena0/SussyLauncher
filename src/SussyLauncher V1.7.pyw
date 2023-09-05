@@ -1,14 +1,18 @@
+from time import time
+startTime = time()
 from importer import *
 
-version = 'V1.7'
+version = 'V1.8'
 
-def fprint(*args):
+_print = print
+
+def print(*args):
     date = datetime.utcnow() - datetime(1970, 1, 1)
     ms = round(date.total_seconds()*1000)%1000
     time = f'{t.strftime(f"%H:%M:%S:{ms}"):<12}'
-    print(f'{time} {"".join(args)}')
+    _print(f'{time} {"".join(args)}')
 
-fprint(f'SussyLauncher {version} build 29')
+print(f'SussyLauncher {version} build 29')
 
 s = socket.socket()
 
@@ -22,101 +26,89 @@ debug = False
 # This isint a pirate launcher!!!
 logged_in = False
 
+# Overrides the Thread object with one that doesent start a new thread
+# THIS WILL ABSOLUTELY DECIMATE START TIMES!!!!
+replace_Thread = False
+
 ###########################################################
 
+if replace_Thread:
+    class Thread:
+        def __init__(self,target,args=[],*_args,**_kwargs):
+            self.target= target
+            self.args = args
+        def start(self):
+            self.target(*self.args)
 
-optionsText = """#OPTIONS.py:
-# YOU CAN EDIT VALUES HERE!
-
-#Use the blurred version of the login background image [1 = True, 0 = False]
-blur_background:
-1
+optionsText = """
+# Use the blurred version of the login background image
+blur_background=True
 
 # Makes the news text font bigger or smaller
-font_size_multiplier:
-1.5
+textSizeMultiplier=1.5
 
-# Use files/versions/<version>/saveData for minecraft data instead of files/saveData [1 = True, 0 = False]
-custom_saveData:
-1
+# Whether to leave the launcher open when launching minecraft
+leave_launcher_open=False
 
-# Name says it all [1 = True, 0 = False]
-leave_launcher_open:
-0
+# Ammount of ram to allocate (GB)
+ram=5
 
-# Whitelist on some servers? Not really a thing yet (WIP) [1 = True, 0 = False]
-whitelist:
-0
-
-# Whitelist username (same as minecraft) (WIP)
-username:
-Example_1234
-
-# Whitelist password (dont worry it is hashed immidiately) (WIP)
-password:
-Example_Password_1234
-
-
-### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
-
-# Ip for whitelist server (WIP)
-whitelist_ip:
-127.0.0.1
-
-
+# Whether to use custom title bar. Looks better but has a slight performance impact on launcher open
+customTitleBar=True
 
 """
 
-def load_config():
-    fprint('[CONFIG] Loading config...')
-    global blur_background,\
-        textSizeMultiplier,\
-        custom_saveData,\
-        leave_launcher_open,\
-        enable_whitelist,\
-        whitelist_username,\
-        whitelist_password,\
-        whitelist_ip_addr,\
-        whitelist_port,\
-        allocated_ram
+def load_config(fix=False):
+    """
+    Loads config from file and maps values to global variables.
+    
+    If config is invalid:
+        Replaces config with default config.
+        Tries to load again:
+            If the config is invalid again:
+                Override values.
+                Ignore config file.
+    """
+    global config, blur_background,textSizeMultiplier,leave_launcher_open,allocated_ram,customTitleBar
+    print('[CONFIG] Loading config...')
     try:
-        with open('data/options.txt') as config:
-            config = config.read().split('\n')
+        with open('data/options.txt','r') as config:
+            _config = config.read().split('\n')
+            config = {}
+            for i in _config:
+                if i.startswith('#'): continue
+                if i == '': continue
+                key,value = i.split('=')
+                config[key] = value
+                print(f'[CONFIG] {key} = {value}')
+                
+                
+            blur_background     = True if config['blur_background'] == 'True' else False
+            textSizeMultiplier  = float(config['textSizeMultiplier'])
+            leave_launcher_open = True if config['leave_launcher_open'] == 'True' else False
+            allocated_ram       = int(config['allocated_ram'])
+            customTitleBar      = True if config['customTitleBar'] == 'True' else False
 
-            blur_background     =  int(config[5])
-            textSizeMultiplier  =  float(config[9])
-            custom_saveData     =  int(config[13])
-            leave_launcher_open =  int(config[17])
-            enable_whitelist           =  int(config[21])
-            whitelist_username  =  str(config[25])
-            whitelist_password  =  str(config[29])
-            whitelist_ip_addr   =  '127.0.0.1'
-            whitelist_port      =  5000
-            allocated_ram       =  int(config[33])
-
-
-    except (FileNotFoundError,IndexError):
+    except Exception as e:
         with open('data/options.txt', 'w') as file:
             file.write(optionsText) # Create and add default settings
-
-            # Set default values
-            blur_background     = 1
+        if fix:
+            print(f'[CONFIG] Error! Using default config... [{e}]')
+            blur_background     = True
             textSizeMultiplier  = 1.5
-            custom_saveData     = 1
-            leave_launcher_open = 0
-            enable_whitelist    = 0
-            whitelist_username  = ''
-            whitelist_password  = ''
-            whitelist_ip_addr   = '127.0.0.1'
-            whitelist_port      = 5000
-            allocated_ram       = 8
+            leave_launcher_open = False
+            allocated_ram       = 5
+            customTitleBar      = True
+        else: load_config(fix=True)
+    
 
-fprint('[LAUNCHER] LOADING CONFIG') 
+print('[LAUNCHER] LOADING CONFIG') 
 load_config()
-        
 
-defaultNewsText = 'Build 22 - UI V2:\nNow you can change allocated ram in config,\nQuilt support maybe?                     '
-defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
+
+
+defaultNewsText = 'Build 24 - UI V2:\nNew an improved config system.\nRemoved a bunch of deprecated features.\nSee the full changelog in github.'
+defaultNewsText += ' '*round(len(defaultNewsText)/25*textSizeMultiplier)
 
 
 minecraft_directory = 'files/'
@@ -125,7 +117,7 @@ installed_versions = mcl.utils.get_installed_versions('files/')
 installed_version_ids = []
 all_versions = mcl.utils.get_available_versions('files/')
 for i in installed_versions:
-    fprint(f'[LAUNCHER] Version found: {i["id"]}')
+    print(f'[LAUNCHER] Version found: {i["id"]}')
     installed_version_ids.append(i['id'])
 
 CLIENT_ID = '347cf8bd-c8d1-4967-8104-ee7493cfbf2f'
@@ -133,7 +125,7 @@ REDIRECT_URL = 'http://localhost/returnUrl'
 SECRET = 'pp18Q~9n25zSSOTX7iCaM.0zGHAVP_efrtSxQaHo'
 
 # Functions
-fprint('[LAUNCHER] Initializing functions')
+print('[LAUNCHER] Initializing functions')
 
 def get_font_size(text,space=1500):
     size = 50
@@ -149,31 +141,12 @@ def install():
         "setMax": lambda max: progressBar.setMax(max)
     }
     launchProgress.start()
-    mcl.install.install_minecraft_version(launchSelector.get(
-    ), minecraft_directory=minecraft_directory, callback=callback)
-    fprint('Install complete!')
+    mcl.fabric.install_fabric(launchSelector.get(),minecraft_directory,fabric_ver,callback)
+    print('Install complete!')
     showInfo('Done!', 'Install complete!\nPlease restart the launcher!!!')
     newsLabel.configure(text=defaultNewsText)
     launchProgress.stop()
 
-
-def whitelist():
-    fprint('Attempting to whitelist...')
-    try: s.connect((whitelist_ip_addr,whitelist_port))
-    except: fprint('Could not connect! Is the server online???')
-    
-    s.send(f'GET TOKEN|{whitelist_username}|{whitelist_password}'.encode())
-    token = s.recv(2048).decode()
-    fprint(token)
-    if token.startswith('TOKEN'):
-        s.send(f'REQUEST WHITELIST|{token}'.encode())
-        a = s.recv(2048).decode()
-        fprint(a)
-    else:
-        #showInfo('Invalid Credentials','Invalid Whitelist Credentials..')
-        fprint('Invalid credentials')
-    
-    
 
 def launch():
     global currentPage
@@ -183,9 +156,9 @@ def launch():
     if currentPage == 'Install':
         if launchSelector.get() in installed_versions:
             showInfo('Version already installed!',f'The version {launchSelector.get()} is a lready installed in "files/versions"! Install cancelled!')
-        fprint(f'[LAUNCHER] Installing {launchSelector.get()}!')
+        print(f'[LAUNCHER] Installing {launchSelector.get()}!')
         Thread(target=install, daemon=True, name='Installer').start()
-        fprint(f'[LAUNCHER] Installed {launchSelector.get()}! RESTART')
+        print(f'[LAUNCHER] Installed {launchSelector.get()}! RESTART')
         return
     
     if currentPage == 'Join':
@@ -193,7 +166,7 @@ def launch():
     else:
         join = False
     
-    fprint(f'[LAUNCHER] Launching {currentPage}')
+    print(f'[LAUNCHER] Launching {currentPage}')
 
     if pages == ['Install','Join']:
         showInfo('Minecraft missing!', 'You need to install a version first!\nHow did you get this error? Create an issue on github or contact Omena0#3610 on discord')
@@ -202,14 +175,7 @@ def launch():
     global login_data
     # Get Minecraft command
     
-    if custom_saveData:
-        gameDirectory = f'files/versions/{currentPage}/saveData'
-        fprint('Custom saveData enabled.')
-    else:
-        fprint('Custom saveData disabled.')
-        gameDirectory = gamedir
-    
-    port = '25565'
+    gameDirectory = f'files/versions/{currentPage}/saveData'
     
     options = {
         "username": login_data["name"],
@@ -223,19 +189,15 @@ def launch():
     
     if join:
         currentPage = launchSelector.get()
-        options["server"] = ip.get()
-        options["port"] = port
+        options["server"] = ip.get().split(':')[0]
+        options["port"] = ip.get().split(':')[1]
 
     global minecraft_command
     minecraft_command = mcl.command.get_minecraft_command(currentPage, minecraft_directory, options)
-
-    # Get whitelisted :)
-    if enable_whitelist:
-        Thread(target=whitelist,daemon=True, name='Whitelisting client').start()
     
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
-    if leave_launcher_open == 0: app.destroy()
+    if leave_launcher_open: app.destroy()
 
 
 def _launch_mc():
@@ -244,7 +206,6 @@ def _launch_mc():
 
 
 def openPage(page):
-    fprint(page)
     global currentPage
     currentPage = page
     
@@ -279,20 +240,21 @@ def openPage(page):
 
 
 def _login(auto=False):
+    start = t.time()
     global login_data, logged_in, username, skins
     if logged_in:
         return
     # Try login from stored login info
-    fprint('[LAUNCHER] Logging in...')
+    print('[LAUNCHER] Logging in...')
     # Try to refresh login from stored credentials
     try:
         with open('data/credentials.txt', 'r') as file:
             content = file.read()
         old_login_data = json.loads(content)
-        fprint('[LAUNCHER] Refreshing credentials...')
+        print('[LAUNCHER] Refreshing credentials...')
         login_data = mcl.microsoft_account.complete_refresh(
             client_id=CLIENT_ID, client_secret=SECRET, redirect_uri=REDIRECT_URL, refresh_token=old_login_data["refresh_token"])
-        fprint('[LAUNCHER] Logged in! Storing login data...')
+        print('[LAUNCHER] Logged in! Storing login data...')
         with open('data/credentials.txt', 'w') as file:
             file.write(json.dumps(login_data))
         logged_in = True
@@ -301,7 +263,7 @@ def _login(auto=False):
     # Otherwise ask the user to log in manually and store login info
     except Exception as e:
         if auto: return 'Failed'
-        fprint(e)
+        print(e)
         login_url, state, code_verifier = mcl.microsoft_account.get_secure_login_data(CLIENT_ID, REDIRECT_URL)
         w.open(login_url, 2, True)
         code_url = tki.CTkInputDialog(title='Enter URL', text='Enter the URL where you were redirected to after signing in.').get_input()
@@ -316,6 +278,8 @@ def _login(auto=False):
             file.write(json.dumps(login_data))
 
         logged_in = True
+    duration = t.time() - start
+    print(f'[PERFORMANCE] Login took {duration} Seconds!')
 
 def login():
     if _login(auto=True) == 'Failed':
@@ -331,7 +295,7 @@ def login():
         canvas.pack(expand=True, fill='both')
 
         t.sleep(0.1)
-        if blur_background == 1:
+        if blur_background:
             bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
         else:
             bgImage = tk.PhotoImage(file='assets/bg.png')
@@ -350,24 +314,24 @@ def login():
         loginApp.mainloop()
 
 
-def mainloop():
+def wait_for_login():
     global login_data, logged_in
-    while True:
-        if logged_in:
-            try:
-                name = login_data["name"]
-                a = get_font_size(name,space=170)
-                playerName.configure(text=f'Logged in as:\n{name}',font=tkfont(size=a))
-            except: pass
-        t.sleep(0.5)
+    while not logged_in: pass
+    try:
+        name = login_data["name"]
+        a = get_font_size(name,space=170)
+        playerName.configure(text=f'Logged in as:\n{name}',font=tkfont(size=a))
+    except: pass
 
 # >THREADED LOGIN
 
-Thread(target=login,daemon=True, name='Microsoft Login').start()
+Thread(target=login, name='Microsoft Login').start()
 
 # PREP FOR GUI
 
 latest_version = mcl.utils.get_latest_version()["release"]
+
+fabric_ver = mcl.fabric.get_latest_loader_version()
 
 async def async_head_render():
     while not logged_in: pass
@@ -377,15 +341,15 @@ async def async_head_render():
     await p.skin.render_head(display_hair=True,vr=0,hr=0)
     
     p.skin.head.save('data/head.png', format='png')
-    fprint('[MINEPI] Head rendered')
+    print('[MINEPI] Head rendered')
     
 
 def head_render():
-    fprint('[MINEPI] Rendering player head..')
+    print('[MINEPI] Rendering player head..')
     asyncio.run(async_head_render())
 
-fprint('[LAUNCHER] Starting player head renderer..')
-if not debug: Thread(target=head_render,daemon=True,name='Head renderer').start()
+print('[LAUNCHER] Starting player head renderer..')
+if not debug: Thread(target=head_render,name='Head renderer').start()
 
 with open('data/currentPage.txt','r') as file:
     currentPage = file.read()
@@ -393,7 +357,7 @@ with open('data/currentPage.txt','r') as file:
 tki.set_appearance_mode('dark')
 tki.set_default_color_theme('blue')
 
-fprint('[LAUNCHER] Initializing classes')
+print('[LAUNCHER] Initializing classes')
 class App(tki.CTk):
     def __init__(self):
         super().__init__()
@@ -412,7 +376,7 @@ class progressBar:
 
     def setProgress(self, progress):
         self.progress = progress
-        fprint(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
+        print(f'[LAUNCHER] Progress: {progress} / {self.max} [{self.status}]')
         launchProgress.set(progress/self.max)
         text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
         size = 100
@@ -423,14 +387,17 @@ class progressBar:
     def setMax(self, max):
         self.max = max
 
-fprint('[LAUNCHER] Preparing to Initialize Main GUI')
+print('[LAUNCHER] Preparing to Initialize Main GUI')
 
 # INIT MAIN GUI
 pages = ['Install','Join']
 
 for i in installed_versions:
     i = i['id']
-    pages.append(i)
+    print(f'[LAUNCHER] Found Version {i}')
+    if 'fabric' in i:
+        pages.append(i)
+    else: print(f'[LAUNCHER] Ignoring non-fabric version [{i}]')
 
 pageCommands = []
 
@@ -441,13 +408,15 @@ for page in pages:
 
 progressBar = progressBar()
 
-versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
+versions = ['1.8.9','1.12.2','1.16.1','1.18.2','1.19.3','1.19.4','1.20.1']
 
-fprint('[LAUNCHER] Initializing Main GUI')
+print('[LAUNCHER] Initializing Main GUI')
 
 app = App()
-titlebar = CustomTitleBar(app)
-titlebar.title(f'SussyLauncher {version}')
+if customTitleBar:
+    titlebar = CustomTitleBar(app)
+    titlebar.title(f'SussyLauncher {version}')
+else: app.title(f'SussyLauncher {version}')
 
 newsFontSize = get_font_size(defaultNewsText,space=2500)
 
@@ -463,15 +432,15 @@ sideFrame = tkframe(master=main, width=100, height=100, corner_radius=15)
 sideFrame.grid(row=0, column=0, pady=10, padx=5, ipady=10, ipadx=10, rowspan=4, sticky='NSEW')
 
 
+
 for i in enumerate(pages):
     index = i[0]
     i = i[1]
-    if 'fabric' in i or 'quilt' in i:
-        i = i.split('-')[0] + '_' + i.split('-')[3]
+    if 'fabric' in i: i = i.split('-')[0] + '_' + i.split('-')[3]
     a = 25
     while round(a*len(i)) > 250:
         a = a - 1
-    fprint(f'[LAUNCHER] Initializing page: {i} [{a}]')
+    print(f'[LAUNCHER] Initializing page: {i} [{a}]')
     button = tkbutton(master=sideFrame, width=60, height=20, corner_radius=7,text=i, font=tkfont(size=a), command=pageCommands[index])
     button.pack(padx=3, pady=10)
 
@@ -516,7 +485,7 @@ a = get_font_size('Logging in...',space=200)
 playerName = tklabel(master=profileFrame, text='Logging in...',font=tkfont(size=a))
 playerName.pack(side='right',padx=10,pady=10,expand=True,fill='both')
 
-fprint('[LAUNCHER] Preparing for mainloop')
+print('[LAUNCHER] Preparing for mainloop')
 
 # Vars
 ip = tki.Variable(master=launchFrame,name='ip',value='mc.hypixel.net')
@@ -526,12 +495,15 @@ ipEntry.grid(column=0, row=0)
 
 openPage(currentPage)
 
-fprint('[LAUNCHER] Starting mainloop...')
+print('[LAUNCHER] Starting mainloop...')
 
-Thread(target=mainloop,daemon=True,name='Mainloop').start()
+Thread(target=wait_for_login,name='Mainloop').start()
 
 app.lift()
 app.attributes('-topmost', True)
 app.attributes('-topmost', False)
+
+duration = time() - startTime
+print(f'[PERFOMANCE] Launcher started in {duration} Seconds!')
 
 app.mainloop()
