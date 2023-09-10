@@ -19,7 +19,7 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
     For detailed information check out the documentation.
     """
 
-    _valid_tk_toplevel_arguments: set = {"bd", "borderwidth", "class", "container", "cursor", "height",
+    _valid_tk_toplevel_arguments: set = {"master", "bd", "borderwidth", "class", "container", "cursor", "height",
                                          "highlightbackground", "highlightthickness", "menu", "relief",
                                          "screen", "takefocus", "use", "visual", "width"}
 
@@ -38,6 +38,14 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         CTkScalingBaseClass.__init__(self, scaling_type="window")
         check_kwargs_empty(kwargs, raise_error=True)
 
+        try:
+            # Set Windows titlebar icon
+            if sys.platform.startswith("win"):
+                customtkinter_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                self.after(200, lambda: self.iconbitmap(os.path.join(customtkinter_directory, "assets", "icons", "CustomTkinter_icon_Windows.ico")))
+        except Exception:
+            pass
+
         self._current_width = 200  # initial window size, always without scaling
         self._current_height = 200
         self._min_width: int = 0
@@ -54,18 +62,27 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         # set title of tkinter.Toplevel
         super().title("CTkToplevel")
 
+        # indicator variables
+        self._iconbitmap_method_called = True
         self._state_before_windows_set_titlebar_color = None
         self._windows_set_titlebar_color_called = False  # indicates if windows_set_titlebar_color was called, stays True until revert_withdraw_after_windows_set_titlebar_color is called
         self._withdraw_called_after_windows_set_titlebar_color = False  # indicates if withdraw() was called after windows_set_titlebar_color
         self._iconify_called_after_windows_set_titlebar_color = False  # indicates if iconify() was called after windows_set_titlebar_color
+        self._block_update_dimensions_event = False
 
+        # save focus before calling withdraw
+        self.focused_widget_before_widthdraw = None
+
+        # set CustomTkinter titlebar icon (Windows only)
+        if sys.platform.startswith("win"):
+            self.after(200, self._windows_set_titlebar_icon)
+
+        # set titlebar color (Windows only)
         if sys.platform.startswith("win"):
             self._windows_set_titlebar_color(self._get_appearance_mode())
 
         self.bind('<Configure>', self._update_dimensions_event)
         self.bind('<FocusIn>', self._focus_in_event)
-
-        self._block_update_dimensions_event = False
 
     def destroy(self):
         self._disable_macos_dark_title_bar()
@@ -182,6 +199,19 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         else:
             return super().cget(attribute_name)
 
+    def wm_iconbitmap(self, bitmap=None, default=None):
+        self._iconbitmap_method_called = True
+        super().wm_iconbitmap(bitmap, default)
+
+    def _windows_set_titlebar_icon(self):
+        try:
+            # if not the user already called iconbitmap method, set icon
+            if not self._iconbitmap_method_called:
+                customtkinter_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                self.iconbitmap(os.path.join(customtkinter_directory, "assets", "icons", "CustomTkinter_icon_Windows.ico"))
+        except Exception:
+            pass
+
     @classmethod
     def _enable_macos_dark_title_bar(cls):
         if sys.platform == "darwin" and not cls._deactivate_macos_window_header_manipulation:  # macOS
@@ -211,6 +241,7 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
         if sys.platform.startswith("win") and not self._deactivate_windows_window_header_manipulation:
 
             self._state_before_windows_set_titlebar_color = self.state()
+            self.focused_widget_before_widthdraw = self.focus_get()
             super().withdraw()  # hide window so that it can be redrawn after the titlebar change so that the color change is visible
             super().update()
 
@@ -240,6 +271,10 @@ class CTkToplevel(tkinter.Toplevel, CTkAppearanceModeBaseClass, CTkScalingBaseCl
 
             self._windows_set_titlebar_color_called = True
             self.after(5, self._revert_withdraw_after_windows_set_titlebar_color)
+
+            if self.focused_widget_before_widthdraw is not None:
+                self.after(10, self.focused_widget_before_widthdraw.focus)
+                self.focused_widget_before_widthdraw = None
 
     def _revert_withdraw_after_windows_set_titlebar_color(self):
         """ if in a short time (5ms) after """

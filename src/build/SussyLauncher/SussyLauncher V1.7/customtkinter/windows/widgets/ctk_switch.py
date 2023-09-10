@@ -54,7 +54,7 @@ class CTkSwitch(CTkBaseClass):
 
         # color
         self._border_color = self._check_color_type(border_color, transparency=True)
-        self._fg_color = ThemeManager.theme["CTkSwitch"]["fg_Color"] if fg_color is None else self._check_color_type(fg_color)
+        self._fg_color = ThemeManager.theme["CTkSwitch"]["fg_color"] if fg_color is None else self._check_color_type(fg_color)
         self._progress_color = ThemeManager.theme["CTkSwitch"]["progress_color"] if progress_color is None else self._check_color_type(progress_color, transparency=True)
         self._button_color = ThemeManager.theme["CTkSwitch"]["button_color"] if button_color is None else self._check_color_type(button_color)
         self._button_hover_color = ThemeManager.theme["CTkSwitch"]["button_hover_color"] if button_hover_color is None else self._check_color_type(button_hover_color)
@@ -92,6 +92,7 @@ class CTkSwitch(CTkBaseClass):
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=0, minsize=self._apply_widget_scaling(6))
         self.grid_columnconfigure(2, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
         self._bg_canvas = CTkCanvas(master=self,
                                     highlightthickness=0,
@@ -221,23 +222,29 @@ class CTkSwitch(CTkBaseClass):
             self._canvas.configure(bg=self._apply_appearance_mode(self._bg_color))
 
             if self._border_color == "transparent":
-                self._canvas.itemconfig("border_parts", fill=self._apply_appearance_mode(self._bg_color),
+                self._canvas.itemconfig("border_parts",
+                                        fill=self._apply_appearance_mode(self._bg_color),
                                         outline=self._apply_appearance_mode(self._bg_color))
             else:
-                self._canvas.itemconfig("border_parts", fill=self._apply_appearance_mode(self._border_color),
+                self._canvas.itemconfig("border_parts",
+                                        fill=self._apply_appearance_mode(self._border_color),
                                         outline=self._apply_appearance_mode(self._border_color))
 
-            self._canvas.itemconfig("inner_parts", fill=self._apply_appearance_mode(self._fg_color),
+            self._canvas.itemconfig("inner_parts",
+                                    fill=self._apply_appearance_mode(self._fg_color),
                                     outline=self._apply_appearance_mode(self._fg_color))
 
             if self._progress_color == "transparent":
-                self._canvas.itemconfig("progress_parts", fill=self._apply_appearance_mode(self._fg_color),
+                self._canvas.itemconfig("progress_parts",
+                                        fill=self._apply_appearance_mode(self._fg_color),
                                         outline=self._apply_appearance_mode(self._fg_color))
             else:
-                self._canvas.itemconfig("progress_parts", fill=self._apply_appearance_mode(self._progress_color),
+                self._canvas.itemconfig("progress_parts",
+                                        fill=self._apply_appearance_mode(self._progress_color),
                                         outline=self._apply_appearance_mode(self._progress_color))
 
-            self._canvas.itemconfig("slider_parts", fill=self._apply_appearance_mode(self._button_color),
+            self._canvas.itemconfig("slider_parts",
+                                    fill=self._apply_appearance_mode(self._button_color),
                                     outline=self._apply_appearance_mode(self._button_color))
 
             if self._state == tkinter.DISABLED:
@@ -292,6 +299,10 @@ class CTkSwitch(CTkBaseClass):
             self._fg_color = self._check_color_type(kwargs.pop("fg_color"))
             require_redraw = True
 
+        if "border_color" in kwargs:
+            self._border_color = self._check_color_type(kwargs.pop("border_color"), transparency=True)
+            require_redraw = True
+
         if "progress_color" in kwargs:
             self._progress_color = self._check_color_type(kwargs.pop("progress_color"), transparency=True)
             require_redraw = True
@@ -304,8 +315,12 @@ class CTkSwitch(CTkBaseClass):
             self._button_hover_color = self._check_color_type(kwargs.pop("button_hover_color"))
             require_redraw = True
 
-        if "border_color" in kwargs:
-            self._border_color = self._check_color_type(kwargs.pop("border_color"), transparency=True)
+        if "text_color" in kwargs:
+            self._text_color = self._check_color_type(kwargs.pop("text_color"))
+            require_redraw = True
+
+        if "text_color_disabled" in kwargs:
+            self._text_color_disabled = self._check_color_type(kwargs.pop("text_color_disabled"))
             require_redraw = True
 
         if "hover" in kwargs:

@@ -99,9 +99,9 @@ class CTkTabview(CTkBaseClass):
         self._draw()
 
     def _segmented_button_callback(self, selected_name):
+        self._set_grid_tab_by_name(selected_name)
+        self._tab_dict[self._current_name].grid_forget()
         self._current_name = selected_name
-        self._grid_forget_all_tabs()
-        self._set_grid_tab_by_name(self._current_name)
 
         if self._command is not None:
             self._command()
@@ -171,9 +171,10 @@ class CTkTabview(CTkBaseClass):
                                   padx=self._apply_widget_scaling(max(self._corner_radius, self._border_width)),
                                   pady=self._apply_widget_scaling(max(self._corner_radius, self._border_width)))
 
-    def _grid_forget_all_tabs(self):
-        for frame in self._tab_dict.values():
-            frame.grid_forget()
+    def _grid_forget_all_tabs(self, exclude_name=None):
+        for name, frame in self._tab_dict.items():
+            if name != exclude_name:
+                frame.grid_forget()
 
     def _create_tab(self) -> CTkFrame:
         new_tab = CTkFrame(self,
@@ -360,8 +361,8 @@ class CTkTabview(CTkBaseClass):
         if name in self._tab_dict:
             self._current_name = name
             self._segmented_button.set(name)
-            self._grid_forget_all_tabs()
             self._set_grid_tab_by_name(name)
+            self.after(100, lambda: self._grid_forget_all_tabs(exclude_name=name))
         else:
             raise ValueError(f"CTkTabview has no tab named '{name}'")
 

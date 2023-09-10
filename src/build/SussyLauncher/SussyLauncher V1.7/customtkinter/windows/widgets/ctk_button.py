@@ -40,7 +40,7 @@ class CTkButton(CTkBaseClass):
                  text: str = "CTkButton",
                  font: Optional[Union[tuple, CTkFont]] = None,
                  textvariable: Union[tkinter.Variable, None] = None,
-                 image: Union[CTkImage, None] = None,
+                 image: Union[CTkImage, "ImageTk.PhotoImage", None] = None,
                  state: str = "normal",
                  hover: bool = True,
                  command: Union[Callable[[], None], None] = None,
@@ -107,12 +107,30 @@ class CTkButton(CTkBaseClass):
 
     def _create_bindings(self, sequence: Optional[str] = None):
         """ set necessary bindings for functionality of widget, will overwrite other bindings """
+
         if sequence is None or sequence == "<Enter>":
             self._canvas.bind("<Enter>", self._on_enter)
+
+            if self._text_label is not None:
+                self._text_label.bind("<Enter>", self._on_enter)
+            if self._image_label is not None:
+                self._image_label.bind("<Enter>", self._on_enter)
+
         if sequence is None or sequence == "<Leave>":
             self._canvas.bind("<Leave>", self._on_leave)
+
+            if self._text_label is not None:
+                self._text_label.bind("<Leave>", self._on_leave)
+            if self._image_label is not None:
+                self._image_label.bind("<Leave>", self._on_leave)
+
         if sequence is None or sequence == "<Button-1>":
             self._canvas.bind("<Button-1>", self._clicked)
+
+            if self._text_label is not None:
+                self._text_label.bind("<Button-1>", self._clicked)
+            if self._image_label is not None:
+                self._image_label.bind("<Button-1>", self._clicked)
 
     def _set_scaling(self, *args, **kwargs):
         super()._set_scaling(*args, **kwargs)
@@ -151,8 +169,11 @@ class CTkButton(CTkBaseClass):
 
     def _update_image(self):
         if self._image_label is not None:
-            self._image_label.configure(image=self._image.create_scaled_photo_image(self._get_widget_scaling(),
-                                                                                    self._get_appearance_mode()))
+            if isinstance(self._image, CTkImage):
+                self._image_label.configure(image=self._image.create_scaled_photo_image(self._get_widget_scaling(),
+                                                                                        self._get_appearance_mode()))
+            elif self._image is not None:
+                self._image_label.configure(image=self._image)
 
     def destroy(self):
         if isinstance(self._font, CTkFont):
@@ -407,6 +428,7 @@ class CTkButton(CTkBaseClass):
 
         if "command" in kwargs:
             self._command = kwargs.pop("command")
+            self._set_cursor()
 
         if "compound" in kwargs:
             self._compound = kwargs.pop("compound")
@@ -414,6 +436,7 @@ class CTkButton(CTkBaseClass):
 
         if "anchor" in kwargs:
             self._anchor = kwargs.pop("anchor")
+            self._create_grid()
             require_redraw = True
 
         super().configure(require_redraw=require_redraw, **kwargs)
@@ -541,7 +564,11 @@ class CTkButton(CTkBaseClass):
         if not (add == "+" or add is True):
             raise ValueError("'add' argument can only be '+' or True to preserve internal callbacks")
         self._canvas.bind(sequence, command, add=True)
-        self._text_label.bind(sequence, command, add=True)
+
+        if self._text_label is not None:
+            self._text_label.bind(sequence, command, add=True)
+        if self._image_label is not None:
+            self._image_label.bind(sequence, command, add=True)
 
     def unbind(self, sequence: str = None, funcid: str = None):
         """ called on the tkinter.Label and tkinter.Canvas """
@@ -549,7 +576,12 @@ class CTkButton(CTkBaseClass):
             raise ValueError("'funcid' argument can only be None, because there is a bug in" +
                              " tkinter and its not clear whether the internal callbacks will be unbinded or not")
         self._canvas.unbind(sequence, None)
-        self._text_label.unbind(sequence, None)
+
+        if self._text_label is not None:
+            self._text_label.unbind(sequence, None)
+        if self._image_label is not None:
+            self._image_label.unbind(sequence, None)
+
         self._create_bindings(sequence=sequence)  # restore internal callbacks for sequence
 
     def focus(self):
