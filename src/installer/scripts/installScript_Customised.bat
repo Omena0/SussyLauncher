@@ -23,7 +23,7 @@ echo #     BUILDING      #
 echo #####################
 echo .
 
-pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "C:\Program Files\Python311\Lib\site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.pyw"
+pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "C:\Users\aijo.aarne\AppData\Local\Programs\Python\Python311\Lib\site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.pyw"
 pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "%appdata%\Python\Python311\site-packages\customtkinter;customtkinter" "src/SussyLauncher V1.7.pyw"
 
 echo .
@@ -62,8 +62,8 @@ echo #    INSTALLING     #
 echo #####################
 echo .
 
-mkdir "C:\Users\aarne\AppData\Roaming\.SussyLauncher\"
-xcopy "src\build\" "C:\Users\aarne\AppData\Roaming\.SussyLauncher\" /E /I /F /Y
-xcopy "src\fabric_install.py" "C:\Users\aarne\AppData\Roaming\.SussyLauncher\" /E /I /F /Y
+mkdir "C:\Users\aijo.aarne\AppData\Roaming\.SussyLauncher\"
+xcopy "src\build\" "C:\Users\aijo.aarne\AppData\Roaming\.SussyLauncher\" /E /I /F /Y
+xcopy "src\fabric_install.py" "C:\Users\aijo.aarne\AppData\Roaming\.SussyLauncher\" /E /I /F /Y
 
 py -c "import tkinter.messagebox;tkinter.messagebox.showinfo('Install complete!', 'SussyLauncher has been installed!')"
