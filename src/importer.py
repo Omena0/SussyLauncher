@@ -1,4 +1,7 @@
-max = 14
+from time import time
+start = time()
+
+max = 15
 
 print(f'[IMPORTER] Initializing modules... ')
 
@@ -29,6 +32,7 @@ a()
 import socket
 a()
 import datetime as dt
+a()
 from datetime import datetime
 a()
 import time as t
@@ -51,4 +55,4 @@ tkOptionMenu = tki.CTkOptionMenu
 tkCanvas = tki.CTkCanvas
 tkImage = tki.CTkImage
 
-print()
+print(f'\n[IMPORTER] Took {time() - start} Seconds to import modules!')

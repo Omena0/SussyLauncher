@@ -1,9 +1,11 @@
 src/data/credentials.txt
 src/build/data/credentials.txt
+src/build
 src/installer/scripts/installScript_Customised.bat
 src/files
 src/perf_analysis.dmp
 src/data/head.png
 
 */__pycache__
+*/build
 src/mods.zip
