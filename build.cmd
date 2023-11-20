@@ -3,8 +3,8 @@ cls
 echo ##### BUILD.CMD #####
 
 echo #### Building ####
-pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "C:\Program Files\Python311\lib\Site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.py"
-pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "%appdata%\Python\Python311\site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.py"
+pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "C:\Program Files\Python311\lib\Site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.pyw"
+pyinstaller --specpath "src/build/spec" --distpath "src/build/SussyLauncher" --workpath "src/build/build" --noconfirm --onedir --windowed --add-data "%appdata%\Python\Python311\site-packages\customtkinter;customtkinter"  "src/SussyLauncher V1.7.pyw"
 
 echo #### Copying Files ####
 
@@ -21,3 +21,5 @@ echo ## Copying tunnel ##
 xcopy "src/frpc/*" "src/build/frpc" /E /I /F /Y
 
 echo ##### BUILD DONE #####
+
+pause
