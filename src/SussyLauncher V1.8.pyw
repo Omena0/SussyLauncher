@@ -66,39 +66,13 @@ fabric_saveData:
 leave_launcher_open:
 0
 
-# Whitelist you on some servers that support this project (i might post it to github) [1 = True, 0 = False]
-enable_whitelist:
-1
-
-# Whitelist username (same as minecraft)
-username:
-Example_1234
-
-# Whitelist password (dont worry it is hashed immidiately)
-password:
-Example_Password_1234
-
-
-### THEESE VALUES YOU SHOULD NOT CHANGE EVER!!! ###
-
-# Ip for whitelist server
-whitelist_ip:
-127.0.0.1
-
-
-
 """
 
 def load_config():
     global blur_background,\
         textSizeMultiplier,\
         fabric_saveData,\
-        leave_launcher_open,\
-        enable_whitelist,\
-        whitelist_username,\
-        whitelist_password,\
-        whitelist_ip_addr,\
-        whitelist_port
+        leave_launcher_open
     try:
         with open('data/options.txt') as config:
             config = config.read().split('\n')
@@ -107,11 +81,6 @@ def load_config():
             textSizeMultiplier  =  float(config[9])
             fabric_saveData     =  int(config[13])
             leave_launcher_open =  int(config[17])
-            enable_whitelist    =  int(config[21])
-            whitelist_username  =  str(config[25])
-            whitelist_password  =  str(config[29])
-            whitelist_ip_addr   =  '127.0.0.1'
-            whitelist_port      =  5000
 
 
     except (FileNotFoundError,IndexError):
@@ -123,15 +92,10 @@ def load_config():
             textSizeMultiplier  = 1.5
             fabric_saveData     = 1
             leave_launcher_open = 0
-            enable_whitelist           = 0
-            whitelist_username  = ''
-            whitelist_password  = ''
-            whitelist_ip_addr   = '127.0.0.1'
-            whitelist_port      = 5000
         
 load_config()
 
-defaultNewsText = 'Build 19: Threaded login, Now logs in while initializing gui!                     '
+defaultNewsText = 'Build 20: Removed whitelisting, added support for 1.20.1 and 1.20.2, removed 1.18.2                        '
 defaultNewsText += ' '*round(len(defaultNewsText)/textSizeMultiplier)
 
 
@@ -170,25 +134,6 @@ def install():
     showInfo('Done!', 'Install complete!\nPlease restart the launcher!!!')
     newsLabel.configure(text=defaultNewsText)
     launchProgress.stop()
-
-
-def whitelist():
-    print('Attempting to whitelist...')
-    try: s.connect((whitelist_ip_addr,whitelist_port))
-    except: print('Could not connect! Is the server online???')
-    
-    s.send(f'GET TOKEN|{whitelist_username}|{whitelist_password}'.encode())
-    token = s.recv(2048).decode()
-    print(token)
-    if token.startswith('TOKEN'):
-        s.send(f'REQUEST WHITELIST|{token}'.encode())
-        a = s.recv(2048).decode()
-        print(a)
-    else:
-        #showInfo('Invalid Credentials','Invalid Whitelist Credentials..')
-        print('Invalid credentials')
-    
-    
 
 def launch():
     global currentPage
@@ -244,9 +189,6 @@ def launch():
     global minecraft_command
     minecraft_command = mcl.command.get_minecraft_command(currentPage, minecraft_directory, options)
 
-    # Get whitelisted :)
-    if enable_whitelist:
-        Thread(target=whitelist,daemon=True, name='Whitelisting client').start()
     
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
@@ -463,7 +405,7 @@ class progressBar:
 progressBar = progressBar()
 
 
-versions = ['1.8.9','1.12.2','1.16.1','1.17.1','1.18.2','1.19.3','1.19.4']
+versions = ['1.8.9','1.12.2','1.16.1','1.18.2','1.19.3','1.19.4','1.20.1','1.20.2']
 
 launchFrame = tkframe(master=main, corner_radius=20)
 launchFrame.grid(row=2, column=1)
