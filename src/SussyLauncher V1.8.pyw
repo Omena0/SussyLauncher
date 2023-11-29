@@ -117,7 +117,7 @@ SECRET = 'pp18Q~9n25zSSOTX7iCaM.0zGHAVP_efrtSxQaHo'
 def get_font_size(text,space=1500):
     size = 50
     while round(size*len(text)) > space:
-        size = size - 1
+        size -= 1
     return size
 
 
@@ -147,12 +147,8 @@ def launch():
         Thread(target=install, daemon=True, name='Installer').start()
         print(f'[LAUNCHER] Installed {launchSelector.get()}! RESTART')
         return
-    
-    if currentPage == 'Join':
-        join = True
-    else:
-        join = False
-    
+
+    join = currentPage == 'Join'
     print(f'[LAUNCHER] Launching {currentPage}')
 
     if pages == ['Install','Join']:
@@ -161,16 +157,14 @@ def launch():
 
     global login_data
     # Get Minecraft command
-    
+
     if 'fabric' in currentPage and fabric_saveData:
         print('fabric version detected!!!')
         gameDirectory = f'files/versions/{currentPage}/saveData'
     else:
         print('Non-fabric version detected!!!')
         gameDirectory = gamedir
-    
-    port = '25565'
-    
+
     options = {
         "username": login_data["name"],
         "uuid": login_data["id"],
@@ -180,16 +174,18 @@ def launch():
         "launcherName": "SussyLauncher", # The name of your launcher
         "launcherVersion": version # The version of your launcher
     }
-    
+
     if join:
         currentPage = launchSelector.get()
         options["server"] = ip.get()
+        port = '25565'
+
         options["port"] = port
 
     global minecraft_command
     minecraft_command = mcl.command.get_minecraft_command(currentPage, minecraft_directory, options)
 
-    
+
     # Start Minecraft
     Thread(target=_launch_mc, daemon=True, name='Minecraft').start()
     if leave_launcher_open == 0: app.destroy()
@@ -204,32 +200,40 @@ def openPage(page):
     print(page)
     global currentPage
     currentPage = page
-    
+
     with open('data/currentPage.txt', 'w') as file:
         file.write(page)
-    
+
     if page == 'Install':
-        launchButton.configure(text='Install')
-        newsLabel.configure(text=defaultNewsText,height=250,font=newsFont)
-        launchSelector.grid_configure(row=0, column=0)
-        launchSelector.configure(values=versions)
-        ipEntry.place_configure(x=999, y=999)
-        
+        openInstallPage()
+
     elif page == 'Join':
-        launchButton.configure(text='Join')
-        text = 'Automatically join server with mc version:'
-        newsLabel.configure(text=text,height=210,font=tkfont(size=get_font_size(text)))
-        launchSelector.grid_configure(row=1, column=0)
-        launchSelector.configure(values=installed_version_ids)
-        ipEntry.grid_configure(row=0,column=0)
-    
+        openJoinPage()
     else:
-        launchButton.configure(text='Launch')
-        text = f'Ready to launch.\nClick "launch" to launch {page}!'
-        newsLabel.configure(text=text, font=tkfont(size=get_font_size(text)),height=288)
-        launchSelector.place_configure(x=999, y=999)
-        launchSelector.configure(values=versions)
-        ipEntry.place_configure(x=999, y=999)
+        openVersionPage(page)
+
+def openInstallPage():
+    launchButton.configure(text='Install')
+    newsLabel.configure(text=defaultNewsText, height=250, font=newsFont)
+    launchSelector.grid_configure(row=0, column=0)
+    launchSelector.configure(values=versions)
+    ipEntry.place_configure(x=999, y=999)
+
+def openVersionPage(page):
+    launchButton.configure(text='Launch')
+    text = f'Ready to launch.\nClick "launch" to launch {page}!'
+    newsLabel.configure(text=text, font=tkfont(size=get_font_size(text)),height=288)
+    launchSelector.place_configure(x=999, y=999)
+    launchSelector.configure(values=versions)
+    ipEntry.place_configure(x=999, y=999)
+
+def openJoinPage():
+    launchButton.configure(text='Join')
+    text = 'Automatically join server with mc version:'
+    newsLabel.configure(text=text,height=210,font=tkfont(size=get_font_size(text)))
+    launchSelector.grid_configure(row=1, column=0)
+    launchSelector.configure(values=installed_version_ids)
+    ipEntry.grid_configure(row=0,column=0)
 
 
 
@@ -273,34 +277,36 @@ def _login(auto=False):
         logged_in = True
 
 def login():
-    if _login(auto=True) == 'Failed':
-        loginApp = App()
-        loginApp.title('Log in to SussyLaucher')
+    if _login(auto=True) != 'Failed':
+        return
+    loginApp = App()
+    loginApp.title('Log in to SussyLaucher')
 
-        # Background
-        main = tkframe(master=loginApp, width=1000, height=1000)
-        main.pack()
+    # Background
+    main = tkframe(master=loginApp, width=1000, height=1000)
+    main.pack()
 
-        canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
-        canvas.pack(expand=True, fill='both')
+    canvas = tkCanvas(master=main, height=600, width=800, highlightthickness=0)
+    canvas.pack(expand=True, fill='both')
 
-        if blur_background == 1:
-            bgImage = tk.PhotoImage(file='assets/bg_blurred.png')
-        else:
-            bgImage = tk.PhotoImage(file='assets/bg.png')
-        bgImage = bgImage.zoom(4, 6)
-        bgImage = bgImage.subsample(10)
+    bgImage = (
+        tk.PhotoImage(file='assets/bg_blurred.png')
+        if blur_background == 1
+        else tk.PhotoImage(file='assets/bg.png')
+    )
+    bgImage = bgImage.zoom(4, 6)
+    bgImage = bgImage.subsample(10)
 
-        canvas.create_image(0, 0, image=bgImage, anchor='nw')
-        canvas.create_text(375, 150, text='Log in to SussyLauncher:',font=tkfont(size=60), fill='white', anchor='center')
+    canvas.create_image(0, 0, image=bgImage, anchor='nw')
+    canvas.create_text(375, 150, text='Log in to SussyLauncher:',font=tkfont(size=60), fill='white', anchor='center')
 
-        login = tkbutton(master=main, text='Log in', font=tkfont(
-            size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=_login)
-        login.place(x=270, y=375)
+    login = tkbutton(master=main, text='Log in', font=tkfont(
+        size=25), width=70, height=50, corner_radius=5, bg_color='transparent', command=_login)
+    login.place(x=270, y=375)
 
-        loginApp.wm_attributes('-transparentcolor', 'grey')
+    loginApp.wm_attributes('-transparentcolor', 'grey')
 
-        loginApp.mainloop()
+    loginApp.mainloop()
 
 
 # >THREADED LOGIN
@@ -322,7 +328,7 @@ tki.set_default_color_theme('blue')
 class App(tki.CTk):
     def __init__(self):
         super().__init__()
-        self.geometry(f"{600}x{500}")
+        self.geometry('600x500')
         if not debug:
             self.resizable(False, False)
 
@@ -346,7 +352,7 @@ app.title(f'SussyLauncher {version}')
 
 newsFontSize = 50
 while round(newsFontSize*len(defaultNewsText)/1.3) > 4100:
-    newsFontSize = newsFontSize - 2
+    newsFontSize -= 2
 
 
 newsFont = tkfont(size=newsFontSize)
@@ -395,7 +401,7 @@ class progressBar:
         text = f'[Installing {launchSelector.get()}] \nProgress: {progress} / {self.max} \n[{self.status}]'+' '*10
         size = 100
         while round(size*len(text)/1.3) > 2050:
-            size = size - 2
+            size -= 2
         newsLabel.configure(text=text, font=tkfont(size=size))
 
     def setMax(self, max):
